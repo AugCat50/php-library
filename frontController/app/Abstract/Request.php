@@ -2,7 +2,7 @@
 /**
  * Абстрактный класс запроса. Реализации находятся в соответствующих папках Http и Cli, в зависимости от типа запроса
  */
-namespace app\Requests;
+namespace app\Abstract;
 
 abstract class Request
 {

@@ -2,7 +2,9 @@
 /**
  * Класс запроса для Cli
  */
-namespace app\Requests;
+namespace app\Cli\Requests;
+
+use app\Abstract\Request;
 
 class CliRequest extends Request
 {

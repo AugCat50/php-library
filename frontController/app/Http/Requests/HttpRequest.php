@@ -4,7 +4,7 @@
  */
 namespace app\Http\Requests;
 
-use app\Requests\Request;
+use app\Abstract\Request;
 
 class HttpRequest extends Request
 {

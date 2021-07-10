@@ -8,9 +8,9 @@ namespace app\ApplicationHelper;
 
 use app\Conf\Conf;
 use app\Registry\Registry;
-use app\Requests\CliRequest;
-// use app\Requests\HttpRequest;
+// use app\Abstract\Request;
 use app\Http\Requests\HttpRequest;
+use app\Cli\Requests\CliRequest;
 
 class ApplicationHelper
 {

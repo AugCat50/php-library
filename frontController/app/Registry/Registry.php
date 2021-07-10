@@ -11,12 +11,13 @@
 namespace app\Registry;
 
 use app\Conf\Conf;
-use app\Requests\Request;
-use app\Requests\CliRequest;
-// use app\Requests\HttpRequest;
-use app\Http\Requests\HttpRequest;
 use app\Traits\SingletonTrait;
 use app\ApplicationHelper\ApplicationHelper;
+
+//Подключение классов наследуемых от Request
+use app\Abstract\Request;
+use app\Http\Requests\HttpRequest;
+use app\Cli\Requests\CliRequest;
 
 class Registry 
 {
@@ -76,7 +77,7 @@ class Registry
      * 
      * @return app\Conf\Conf
      */
-    public function getEnviroment(): Conf
+    public function getEnviroment()
     {
         return $this->enviroment;
     }
@@ -96,16 +97,13 @@ class Registry
      * 
      * @return app\Conf\Conf
      */
-    public function getRoutes(): Conf
+    public function getRoutes()
     {
         return $this->routes;
     }
 
     public function setRequest(Request $request)
     {
-        if($request instanceof Request) d($request, 1);
-        // $request->e('dsfdsf');
-        // exit;
         $this->request = $request;
     }
     

@@ -8,7 +8,7 @@ namespace app\Conf;
 //В классе определены только методы set и get, но здесь может быть организован поиск и синтаксический анализ файлов, а так же обнаружение данных
 class Conf
 {
-    private $data = [];
+    private $data;
     
     public function __construct(array $data)
     {
