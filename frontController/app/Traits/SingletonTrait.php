@@ -1,6 +1,5 @@
 <?php
-
-// namespace ;
+namespace app\Traits;
 
 trait SingletonTrait
 {
@@ -23,15 +22,6 @@ trait SingletonTrait
     {
         //
     }
-
-    /**
-     * запрет на десериализацию
-     * Парсер выдаёт варнинг. Матод должен быть паблик.
-     */
-    // private function __wakeup()
-    // {
-    //     //
-    // }
 
     public static function getInstance()
     {
