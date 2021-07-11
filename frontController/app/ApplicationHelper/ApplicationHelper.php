@@ -1,16 +1,15 @@
 <?php
 /**
  * ApplicationHelper
- * Не обязательный класс для шаблона FrontController.
- * Его задача - обработать настройки приложения. Загрузить переменные окружения и зависимости параметр запроса - комманда.
+ * Не обязательный класс для шаблона FrontController, 
+ * реализует стратегию инициализации переменных окружения и routes, зависимостей Url - комманда.
  */
 namespace app\ApplicationHelper;
 
 use app\Conf\Conf;
 use app\Registry\Registry;
-// use app\Abstract\Request;
-use app\Http\Requests\HttpRequest;
-use app\Cli\Requests\CliRequest;
+use app\Requests\Http\HttpRequest;
+use app\Requests\Cli\CliRequest;
 
 class ApplicationHelper
 {
@@ -42,6 +41,7 @@ class ApplicationHelper
 
         $this->setupOptions();
 
+        //попытка выяснить, выполняется ли приложение в контексте веб или запущено из командной строки
         if (isset($_SERVER['REQUEST_METHOD'])) {
             $request = new HttpRequest();
         } else {
@@ -49,6 +49,7 @@ class ApplicationHelper
         }
         // d($request, 1);
         $this->reg->setRequest($request);
+        // d($this->reg);
     }
     
     private function setupOptions()

@@ -10,14 +10,13 @@
  */
 namespace app\Registry;
 
-use app\Conf\Conf;
 use app\Traits\SingletonTrait;
+
+use app\Conf\Conf;
 use app\ApplicationHelper\ApplicationHelper;
 
 //Подключение классов наследуемых от Request
-use app\Abstract\Request;
-use app\Http\Requests\HttpRequest;
-use app\Cli\Requests\CliRequest;
+use app\Requests\Request;
 
 class Registry 
 {
@@ -48,6 +47,7 @@ class Registry
      * Объект реквеста. Из namespace app\Http или app\Cli ,в зависимости от запроса, поступившего в систему
      */
     private $request;
+
 
     /**
      * Создаёт, сохраняет и возвращает объект Application Helper
@@ -102,22 +102,13 @@ class Registry
         return $this->routes;
     }
 
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
     public function setRequest(Request $request)
     {
         $this->request = $request;
     }
-    
-    public function getRequest($connection): Request
-    {
-        if (is_null($this->reuest[$connection])) {
-            throw new \Exception('Объект типа request не задан.');
-            return $this->request;
-        }
-    }
-
-    // На удаление
-    // public function getAccessManager()
-    // {
-
-    // }
 }

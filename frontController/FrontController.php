@@ -1,5 +1,7 @@
 <?php
 use app\Registry\Registry;
+use app\CommandResolver\CommandResolver;
+use app\Commands\CommandContext;
 
 class FrontController
 {
@@ -14,7 +16,7 @@ class FrontController
     {
         $frontController = new FrontController();
         $frontController->init() ;
-        // $frontController->handleRequest();
+        $frontController->handleRequest();
         // d($frontController);
     }
 
@@ -26,11 +28,18 @@ class FrontController
         $this->reg->getApplicationHelper()->init();
     }
 
+    /**
+     * Обработка запроса начинается здесь.
+     * 
+     * Контроллер, обращается к логике приложения, выполняя команду из объекта типа Command.
+     * Этот объект выбирается в соответствии со структурой запрошенного URL.
+     */
     private function handleRequest()
     {
-        // $request = $reg->getRequest();
-        // $resolver = new CommandResolver();
-        // $cmd = $resolver->getCommand($request);
-        // $cmd->execute($request);
+        $request  = $this->reg->getRequest();
+        $resolver = new CommandResolver();
+        $cmd      = $resolver->getCommand($request);
+        $msg      = $cmd->execute($request);
+        echo $msg;
     }
 }
