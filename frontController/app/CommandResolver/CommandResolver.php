@@ -1,4 +1,8 @@
 <?php
+/**
+ * Класс, отвечающий за поиск и получение команды соотвествующий url запроса.
+ * Фабрика команд.
+ */
 namespace app\CommandResolver;
 
 use app\Requests\Request;
@@ -7,21 +11,34 @@ use app\Registry\Registry;
 
 class CommandResolver{
     private static $refcmd     = null;
-    private static $defaultcmd = Defaultcommand::class;
+    private static $defaultcmd = DefaultCommand::class;
 
     public function __construct()
     {
         // этот объект можно сделать конфигурируемым
         self::$refcmd = new \ReflectionClass(Command::class);
-        d(self::$refcmd);
     }
 
+    /**
+     * Метод, получающий объект команды соотвествующий url запроса
+     * 
+     * @param app\Requests\Request $request
+     * 
+     * @return app\Commands\Command
+     */
     public function getCommand(Request $request): Command
     {
-        $reg      = Registry::getInstance();
+        //Получить объект реестр
+        $reg = Registry::getInstance();
+
+        //Получаем массив роутов
         $commands = $reg->getRoutes();
-        $path     = $request->getPath();
-        $class    = $commands->get($path);
+
+        //Получить url из объекта реквест
+        $path = $request->getPath();
+
+        //Ищем в массиве роутов соответствие url запроса, получаем полное имя класса
+        $class = $commands->get($path);
 
         if (is_null($class)) {
             $request->addFeedback("Соответствие пути ". $path. " не обнаружено!");

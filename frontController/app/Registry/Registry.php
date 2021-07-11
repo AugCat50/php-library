@@ -3,10 +3,11 @@
  * Реестр
  * 
  * Этот шаблон предназначен для того, чтобы предоставлять доступ к объектам во всей системе, 
- * позволяет обойти каналы связи в системе и изабвиться от длинных путей передачи информации.
+ * позволяет обойти каналы связи и изабвиться от длинных путей передачи информации.
  * Лучшая альтернатива глобальным переменным.
  * 
  * Является синглтоном.
+ * (Камни не кидать)
  */
 namespace app\Registry;
 
@@ -14,8 +15,6 @@ use app\Traits\SingletonTrait;
 
 use app\Conf\Conf;
 use app\ApplicationHelper\ApplicationHelper;
-
-//Подключение классов наследуемых от Request
 use app\Requests\Request;
 
 class Registry 
@@ -25,26 +24,28 @@ class Registry
     /**
      * Объект Application Helper
      * 
-     * @var app\ApplicationHelper\ApplicationHelper $applicationHelper
+     * @var app\ApplicationHelper\ApplicationHelper
      */
     private $applicationHelper = null;
 
     /**
      * Объект Conf с переменными окружения
      * 
-     * @var app\Conf\Conf $enviroment
+     * @var Conf
      */
     private $enviroment;
 
     /**
      * Объект Conf с настройками роутов
      * 
-     * @var app\Conf\Conf $routes
+     * @var Conf
      */
     private $routes;
 
     /**
-     * Объект реквеста. Из namespace app\Http или app\Cli ,в зависимости от запроса, поступившего в систему
+     * Объект реквест. app\Requests\Http\ или app\Requests\Cli\ ,
+     * в зависимости от запроса, поступившего в систему
+     * @var Request
      */
     private $request;
 
@@ -66,6 +67,8 @@ class Registry
      * Установить объект, содержащий массив настроек окружения
      * 
      * @param app\Conf\Conf $enviroment
+     * 
+     * @return void
      */
     public function setEnviroment(Conf $enviroment)
     {
@@ -77,7 +80,7 @@ class Registry
      * 
      * @return app\Conf\Conf
      */
-    public function getEnviroment()
+    public function getEnviroment(): Conf
     {
         return $this->enviroment;
     }
@@ -86,6 +89,8 @@ class Registry
      * Установить объект, содержащий массив зависимостей запрос - комманда
      * 
      * @param app\Conf\Conf $routes
+     * 
+     * @return void
      */
     public function setRoutes(Conf $routes)
     {
@@ -97,18 +102,31 @@ class Registry
      * 
      * @return app\Conf\Conf
      */
-    public function getRoutes()
+    public function getRoutes(): Conf
     {
         return $this->routes;
     }
 
-    public function getRequest(): Request
-    {
-        return $this->request;
-    }
-
+    /**
+     * Установить объект Request
+     * 
+     * @param app\Request $request
+     * 
+     * @return void
+     */
     public function setRequest(Request $request)
     {
         $this->request = $request;
+    }
+
+    /**
+     * Получить объект Request
+
+     * 
+     * @return app\Request
+     */
+    public function getRequest(): Request
+    {
+        return $this->request;
     }
 }

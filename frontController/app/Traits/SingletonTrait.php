@@ -3,6 +3,11 @@ namespace app\Traits;
 
 trait SingletonTrait
 {
+    /**
+     * Хранилище экземпляра
+     * 
+     * @var SingletonTrait;
+     */
     private static $instance = null;
 
     /**
@@ -23,6 +28,9 @@ trait SingletonTrait
         //
     }
 
+    /**
+     * Получить экземпляр
+     */
     public static function getInstance()
     {
         return static::$instance ?? (static::$instance = new static());

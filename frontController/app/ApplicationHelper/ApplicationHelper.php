@@ -15,20 +15,30 @@ class ApplicationHelper
 {
     /**
      * Путь к файлу - Настройки окружения
+     * 
+     * @var string
      */
     private $enviroment;
 
     /**
      * Путь к файлу - Роуты. Но по факту, зависимости настроек запроса с коммандой (command)
+     * 
+     * @var string
      */
     private $routes;
 
     /**
      * Реестр
+     * 
+     * @var app\Registry\Registry
      */
     private $reg;
     
 
+    /**
+     * Конструктор.
+     * Установка путей к файлам настроек.
+     */
     public function __construct()
     {
         $this->enviroment = dirname(dirname(__DIR__)) . "/env.ini";
@@ -36,22 +46,29 @@ class ApplicationHelper
         $this->reg        = Registry::getInstance();
     }
     
+    /**
+     * Инициализация приложения. Попытка выяснить, выполняется ли приложение в контексте веб или запущено из командной строки
+     * 
+     * @return void
+     */
     public function init()
     {
-
         $this->setupOptions();
 
-        //попытка выяснить, выполняется ли приложение в контексте веб или запущено из командной строки
         if (isset($_SERVER['REQUEST_METHOD'])) {
             $request = new HttpRequest();
         } else {
             $request = new CliRequest();
         }
-        // d($request, 1);
         $this->reg->setRequest($request);
-        // d($this->reg);
     }
     
+    /**
+     * Парсинг файлов настроек в объекты-обёртки Conf
+     * Настройки окружения и роуты.
+     * 
+     * @return void
+     */
     private function setupOptions()
     {
         if(!file_exists($this->enviroment)) {

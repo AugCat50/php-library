@@ -17,6 +17,7 @@ class HttpRequest extends Request
         // в методах запросов POST, GET, т.д., но
         // этого нельзя делать в реальном проекте!
         $this->properties = $_REQUEST;
+        // d($this->properties);
 
         if (isset($_SERVER['PATH_INFO'])) {
             $this->path = $_SERVER['PATH_INFO'];
