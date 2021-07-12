@@ -12,7 +12,9 @@
             //Подключение автозагрузчика
             require_once('autoload.php');
             //Точка входа
-            FrontController::run();
+            $mapper = new Mapper\VenueMapper();
+            $venue  = $mapper->find(1);
+            d($venue);
         ?>
     </body>
 </html>
