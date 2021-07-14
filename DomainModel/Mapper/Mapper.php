@@ -2,16 +2,34 @@
 /**
  * преобразователь данных по шаблону Data Mapper — это класс, который 
  * отвечает за управление передачей данных из базы данных в отдельный объект
+ * 
+ * В базовом классе сосредоточены общие функциональные средства, 
+ * а обязанности по выполнению операций над конкретными объектами делегируются дочерним классам
  */
 namespace Mapper;
 
 use Registry\Registry;
+use Collections\Collection;
+use DomainModel\VenueModel;
 use DomainModel\DomainModel;
 
 abstract class Mapper
 {
     protected $pdo;
     protected $reg;
+
+    abstract public    function update(DomainModel $object);
+    abstract protected function doCreateObject(array $raw): DomainModel;
+    abstract protected function doInsert(DomainModel $object);
+    abstract protected function selectStmt(): \PDOStatement;
+    abstract protected function targetclass(): string;
+
+    /**
+     * Абстрактные методы getCollection() и selectAllStmt(), чтобы все объекты типа Mapper могли
+     * возвращать коллекцию, содержащую их постоянно сохраняемые объекты предметной области. 
+     */
+    abstract protected function selectAllStmt(): \PDOStatement;
+    abstract protected function getCollection(array $raw): Collection;
 
     public function __construct()
     {
@@ -35,8 +53,22 @@ abstract class Mapper
         //Получить подготовленный оператор SELECT языка SQL в дочерней реализации и запустить на выполнение
         $this->selectStmt()->execute([$id]);
 
-        //??
+        /**
+         * PDOStatement::fetch — Извлечение следующей строки из результирующего набора
+         * @see https://www.php.net/manual/ru/pdostatement.fetch.php
+         */
         $row = $this->selectStmt()->fetch();
+
+        /**
+         * PDOStatement::closeCursor — освобождает соединение с сервером, давая возможность запускать другие SQL-запросы.
+         * 
+         * Метод оставляет запрос в состоянии готовности к повторному запуску. 
+         * Этот метод полезен при использовании драйверов баз данных, которые не позволяют запустить PDOStatement, 
+         * пока предыдущий объект PDOStatement не выберет все данные из результирующего набора. 
+         * Если это ограничение распространяется на ваш драйвер, будет вызвана ошибка нарушения последовательности запросов (out-of-sequence error). 
+         * 
+         * @see https://www.php.net/manual/ru/pdostatement.closecursor.php
+         */
         $this->selectStmt()->closeCursor();
 
         if (! is_array($row)) {
@@ -63,12 +95,20 @@ abstract class Mapper
 
     public function insert(DomainModel $obj)
     {
-    $this->dolnsert($obj);
+    $this->doInsert($obj);
     }
 
-    abstract public    function update(DomainModel $object);
-    abstract protected function doCreateObject(array $raw): DomainModel;
-    abstract protected function dolnsert(DomainModel $object);
-    abstract protected function selectStmt(): \PDOStatement;
-    abstract protected function targetclass(): string;
+    /**
+     * В данном методе вызывается дочерний метод selectAllStmt (). 
+     * Как и метод selectStmt (), он должен содержать подготовленный оператор SQL, по
+     * которому из таблицы выбираются все строки.
+     */
+    public function findAll(): Collection
+    {
+        $this->selectAllStmt()->execute([]);
+
+        //вызывается еще один новый метод getCollection(), которому передаются обнаруженные данные
+        return $this->getCollection( $this->selectAllStmt()->fetchAll() ) ;
+    }
+
 }
