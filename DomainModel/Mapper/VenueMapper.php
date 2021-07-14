@@ -17,6 +17,8 @@ class VenueMapper extends Mapper
     private $updateStmt;
     private $insertStmt;
 
+    private $selectAllStmt;
+
     /**
      * Заранее подготавливаем запросы к БД
      */
@@ -26,6 +28,8 @@ class VenueMapper extends Mapper
         $this->selectStmt = $this->pdo->prepare("SELECT * FROM venue WHERE id=?");
         $this->updateStmt = $this->pdo->prepare("UPDATE venue SET name=?, id=? WHERE id=?");
         $this->insertStmt = $this->pdo->prepare("INSERT INTO venue ( name ) VALUES ( ? )");
+
+        $this->selectAllStmt = $this->pdo->prepare("SELECT * FROM venue");
     }
 
     protected function targetClass(): string
@@ -88,13 +92,8 @@ class VenueMapper extends Mapper
         return $this->selectStmt;
     }
 
-    protected function selectAllStmt(): \PDOStatement;
+    protected function selectAllStmt(): \PDOStatement
     {
-
-    }
-
-    protected function getCollection(array $raw): Collection;
-    {
-        
+        return $this->selectAllStmt;
     }
 }

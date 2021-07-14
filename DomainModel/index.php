@@ -8,11 +8,7 @@
     <body class="body">
         <?php
             //Подключение дебаг функции
-
-use DomainModel\VenueModel;
-// use Mapper\SpaceMapper;
-
-require_once('functions/d.php');
+            require_once('functions/d.php');
             //Подключение автозагрузчика
             require_once('autoload.php');
             //Точка входа
@@ -48,8 +44,14 @@ require_once('functions/d.php');
             //     // d($venue->getName());
             // }
 
-            $sm = new Mapper\SpaceMapper();
-            $sm->findByVenue(2);
+            // $sm = new Mapper\SpaceMapper();
+            // $sm->findByVenue(2);
+
+            // $mapper = new Mapper\VenueMapper();
+            // $venue  = new DomainModel\VenueModel(-1, "The Likey Lounge");
+            // $mapper->insert($venue);
+            // $venue  = $mapper->find($venue->getld());
+            // print_r($venue);
         ?>
     </body>
 </html>

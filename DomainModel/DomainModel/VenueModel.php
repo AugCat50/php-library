@@ -1,4 +1,7 @@
-<?php 
+<?php
+/**
+ * Venue содержит в себе Spaces
+ */
 namespace DomainModel;
 
 use Registry\Registry;
