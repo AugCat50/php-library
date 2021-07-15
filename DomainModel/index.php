@@ -12,64 +12,25 @@
             //Подключение автозагрузчика
             require_once('autoload.php');
             //Точка входа
-            $mapper = new Mapper\VenueMapper();
+            // $mapper = new Mapper\VenueMapper();
             // $venue  = new DomainModel\VenueModel();
 
-            // (int)    $raw['id'],
-            // (int)    $raw['space'],
-            // (string) $raw['start'],
-            // (int)    $raw['duration'],
-            // (string) $raw['name']
-            
-            // $mapper->insert($venue);
-            // d($mapper,1);
-            $venue  = $mapper->find(2);
-            // $spaces = $venue->getEvents();
-            // foreach ($spaces as $space){
-            //     d($space);
-            // }
-            // d($spaces);
+            //Тестирование IdentityMap
+            $mapper = new Mapper\VenueMapper();
+            $venue  = new DomainModel\VenueModel(-1, "Какой-то текст");
+
             d($venue);
 
+            $mapper->insert($venue);
 
+            $venue2 = $mapper->find($venue->getId());
+            d($venue2);
 
+            $venue2->setName("Изменённый текст");
 
-            // $mapper = new Mapper\VenueMapper();
-            // $venue = new DomainModel\VenueModel(-1, "The Likey Lounge");
-            // // Добавим объект в базу данных
-            // $mapper->insert($venue) ;
-            // // Снова найдем объект - просто для проверки, что все работает!
-            // $venue = $mapper->find($venue->getId());
-            // d($venue);
-            // // Внесем изменение в найденный объект
-            // $venue->setName("Новое The Bibble Beer Likey Lounge");
-
-            // // Вызовем операцию обновления измененных данных
-            // $mapper->update($venue);
-            // // И снова обратимся к базе данных, чтобы проверить, что все работает
-            // $venue = $mapper->find($venue->getId());
-            // d($venue);
-
-
-            //Тест для коллекций
-            // $reg        = Registry\Registry::getInstance ();
-            // $collection = $reg->getVenueCollection();
-            // $collection->add(new VenueModel(-1, "Loud and Thumping"));
-            // $collection->add(new VenueModel(-1, "Eeezy"));
-            // $collection->add(new VenueModel(-1, "Duck and Badger"));
-            // foreach ($collection as $venue) {
-            //     print $venue->getName() . "<br>";
-            //     // d($venue->getName());
-            // }
-
-            // $sm = new Mapper\SpaceMapper();
-            // $sm->findByVenue(2);
-
-            // $mapper = new Mapper\VenueMapper();
-            // $venue  = new DomainModel\VenueModel(-1, "The Likey Lounge");
-            // $mapper->insert($venue);
-            // $venue  = $mapper->find($venue->getld());
-            // print_r($venue);
+            $mapper->update($venue2);
+            $venue3 = $mapper->find($venue->getId());
+            d($venue3);
         ?>
     </body>
 </html>

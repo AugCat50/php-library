@@ -12,6 +12,7 @@ use Registry\Registry;
 use Collections\Collection;
 use DomainModel\VenueModel;
 use DomainModel\DomainModel;
+use IdentityMap\ObjectWatcher;
 
 abstract class Mapper
 {
@@ -50,6 +51,13 @@ abstract class Mapper
      */
     public function find(int $id): DomainModel
     {
+        //Сначала проверить наличие ссылки на объект в ObjectWatcher (IdentityMap)
+        //Если таковой уже имеется, возвращаем, если нет, идём дальше
+        $old = $this->getFromMap($id);
+        if (! is_null($old)) {
+            return $old;
+        }
+
         //Получить подготовленный оператор SELECT языка SQL в дочерней реализации и запустить на выполнение
         $this->selectStmt()->execute([$id]);
 
@@ -89,7 +97,18 @@ abstract class Mapper
      */
     public function createObject(array $raw): DomainModel
     {
+        //Сначала проверить наличие ссылки на объект в ObjectWatcher (IdentityMap)
+        //Если таковой уже имеется, возвращаем, если нет, идём дальше
+        $old = $this->getFromMap($raw['id']);
+        if (! is_null($old)) {
+            return $old;
+        }
+
+        //Создать объект
         $obj = $this->doCreateObject($raw);
+
+        //Сохранить ссылку на объект в ObjectWatcher (IdentityMap)
+        $this->addToMap($obj);
         return $obj;
     }
 
@@ -103,6 +122,9 @@ abstract class Mapper
         }
 
         $this->doInsert($model);
+
+        //Сохранить  ссылку на объект в ObjectWatcher (IdentityMap)
+        $this->addToMap($model);
     }
 
     public function update(DomainModel $model)
@@ -118,9 +140,50 @@ abstract class Mapper
     }
 
     /**
+     * Блок общения с ObjectWatcher (IdentityMap)
+     * 
+     * В данном классе предусмотрены два удобных метода — addToMap() и getFromMap(). 
+     * Это дает возможность не запоминать полный синтаксис статического обращения к классу ObjectWatcher
+     * 
+     * @param int $id
+     * 
+     * @return null|object
+     */
+    private function getFromMap(int $id)
+    {
+        return ObjectWatcher::exists( $this->targetClass(), $id );
+    }
+
+    /**
+     * @param DomainModel $model
+     * 
+     * @return null
+     */
+    private function addToMap(DomainModel $model)
+    {
+        ObjectWatcher::add($model);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
      * В данном методе вызывается дочерний метод selectAllStmt (). 
      * Как и метод selectStmt (), он должен содержать подготовленный оператор SQL, по
      * которому из таблицы выбираются все строки.
+     * 
+     * TODO: пока не реализовано
      */
     public function findAll(): Collection
     {
@@ -130,5 +193,11 @@ abstract class Mapper
         //вызывается еще один новый метод getCollection(), которому передаются обнаруженные данные
         return $this->getCollection( $this->selectAllStmt()->fetchAll() ) ;
     }
+
+
+
+
+
+
 
 }
