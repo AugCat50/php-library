@@ -21,19 +21,6 @@ class ObjectWatcher
     private $all = [ ] ;
     private static $instance = null;
 
-    // private function __construct()
-    // {
-    //     //
-    // }
-
-    // public static function instance(): self
-    // {
-    //     if (is_null(self::$instance)) {
-    //         self::$instance = new ObjectWatcher();
-    //     }
-    //     return self::$instance;
-    // }
-
     /**
      * Генерация уникального ключа объекта. 
      * Создаётся конкатинацией имени класса и Id
