@@ -18,11 +18,11 @@ abstract class Mapper
     protected $pdo;
     protected $reg;
 
-    abstract public    function update(DomainModel $object);
     abstract protected function doCreateObject(array $raw): DomainModel;
-    abstract protected function doInsert(DomainModel $object);
+    abstract protected function doInsert(DomainModel $model);
+    abstract protected function doUpdate(DomainModel $model);
     abstract protected function selectStmt(): \PDOStatement;
-    abstract protected function targetclass(): string;
+    abstract protected function targetClass(): string;
 
     /**
      * Абстрактные методы getCollection() и selectAllStmt(), чтобы все объекты типа Mapper могли
@@ -93,9 +93,28 @@ abstract class Mapper
         return $obj;
     }
 
-    public function insert(DomainModel $obj)
+    public function insert(DomainModel $model)
     {
-    $this->doInsert($obj);
+        //Получаем имя класса в дочерней реализации
+        $class = $this->targetClass();
+        //Проверяем, что модель нужного класса
+        if (! ($model instanceof $class)) {
+            throw new \Exception("Мапперу должен быть передан объект типа {$class}");
+        }
+
+        $this->doInsert($model);
+    }
+
+    public function update(DomainModel $model)
+    {
+        //Получаем имя класса в дочерней реализации
+        $class = $this->targetClass();
+        //Проверяем, что модель нужного класса
+        if (! ($model instanceof $class)) {
+            throw new \Exception("Мапперу должен быть передан объект типа {$class}");
+        }
+
+        $this->doUpdate($model);
     }
 
     /**

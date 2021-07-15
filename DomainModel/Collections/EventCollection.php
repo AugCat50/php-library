@@ -1,13 +1,13 @@
 <?php
 /**
- * Коллекция для объектов типа Venue
+ * Коллекция для объектов типа Event
  */
 namespace Collections;
 
-use DomainModel\VenueModel;
-use Mapper\VenueMapper;
+use DomainModel\EventModel;
+use Mapper\EventMapper;
 
-class VenueCollection extends Collection
+class EventCollection extends Collection
 {
     /**
      * Возвращает имя класса модели
@@ -17,7 +17,7 @@ class VenueCollection extends Collection
      */
     public function targetClass(): string
     {
-        return VenueModel::class;
+        return EventModel::class;
     }
 
     /**
@@ -28,6 +28,6 @@ class VenueCollection extends Collection
      */
     public function targetMapperClass(): string
     {
-        return VenueMapper::class;
+        return EventMapper::class;
     }
 }

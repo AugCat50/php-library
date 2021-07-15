@@ -12,8 +12,8 @@
             //Подключение автозагрузчика
             require_once('autoload.php');
             //Точка входа
-            $mapper = new Mapper\EventMapper();
-            $venue  = new DomainModel\EventModel(3, 2, 'updated text start2', 276, 'Редактированное событие');
+            $mapper = new Mapper\VenueMapper();
+            // $venue  = new DomainModel\VenueModel();
 
             // (int)    $raw['id'],
             // (int)    $raw['space'],
@@ -21,20 +21,28 @@
             // (int)    $raw['duration'],
             // (string) $raw['name']
             
-            $mapper->update($venue);
+            // $mapper->insert($venue);
             // d($mapper,1);
-            $venue  = $mapper->find($venue->getId());
+            $venue  = $mapper->find(2);
+            // $spaces = $venue->getEvents();
+            // foreach ($spaces as $space){
+            //     d($space);
+            // }
+            // d($spaces);
             d($venue);
 
+
+
+
             // $mapper = new Mapper\VenueMapper();
-            // $venue = new VenueModel(-1, "The Likey Lounge");
+            // $venue = new DomainModel\VenueModel(-1, "The Likey Lounge");
             // // Добавим объект в базу данных
             // $mapper->insert($venue) ;
             // // Снова найдем объект - просто для проверки, что все работает!
             // $venue = $mapper->find($venue->getId());
             // d($venue);
             // // Внесем изменение в найденный объект
-            // $venue->setName("The Bibble Beer Likey Lounge");
+            // $venue->setName("Новое The Bibble Beer Likey Lounge");
 
             // // Вызовем операцию обновления измененных данных
             // $mapper->update($venue);

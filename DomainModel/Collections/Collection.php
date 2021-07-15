@@ -25,36 +25,44 @@ abstract class Collection implements \Iterator
      * 
      * @var int
      */
-    protected $total   = 0;
+    protected $total = 0;
 
     /**
      * Mассив данных
      * 
      * @var array
      */
-    protected $raw     = [] ;
+    protected $raw = [] ;
 
     /**
      * Указатель
      * 
      * @var int
      */
-    private   $pointer = 0;
+    private $pointer = 0;
 
     /**
      * Массив объектов модели
      * 
      * @var array
      */
-    private   $objects = [];
+    private $objects = [];
 
     /**
-     * Для получения имени класса модели
-     * Дочерняя коллекция соответстует конкретному типу модели и может содержать только объекты её типа
+     * Возвращает имя класса модели
+     * Используется для проверки, дочерняя коллекция соответстует конкретному типу модели и может содержать только объекты её типа
      * 
      * @return string
      */
     abstract public function targetClass(): string;
+
+    /**
+     * Возвращает имя класса Маппера
+     * Используется для проверки, дочерняя коллекция должна получить конкретный тип маппера
+     * 
+     * @return string
+     */
+    abstract public function targetMapperClass(): string;
 
     /**
      * В конструктор передаётся массив данных, полученный из БД и объект Mapper,
@@ -73,6 +81,13 @@ abstract class Collection implements \Iterator
             throw new \Exception("Нужен объект типа Mapper для создания объектов");
         }
 
+        //Получаем имя класса маппера в дочерней реализации
+        $class = $this->targetMapperClass();
+        //Проверяем, что маппер нужного класса
+        if (! ($mapper instanceof $class)) {
+            throw new \Exception("Коллекции необходимо передать маппер типа {$class}");
+        }
+
         $this->raw    = $raw;
         $this->total  = count($raw);
         $this->mapper = $mapper;
@@ -85,19 +100,20 @@ abstract class Collection implements \Iterator
      * 
      * @return void
      */
-    public function add(DomainModel $object)
+    public function add(DomainModel $model)
     {
         //Получаем имя класса в дочерней реализации
         $class = $this->targetClass();
         //В коллекцию можно добавить только объекты соответствующего класса
-        if (! ($object instanceof $class)) {
-            throw new \Exception("Это коллекция {$class}");
+        if (! ($model instanceof $class)) {
+            throw new \Exception("Это коллекция {$class}, можно добавлять только соответствующие модели");
         }
 
+        //Для шаблона Lazy Load
         $this->notifyAccess();
 
         //Добавить объект в массив объектов
-        $this->objects[$this->total] = $object;
+        $this->objects[$this->total] = $model;
         $this->total++;
     }
 
@@ -109,6 +125,8 @@ abstract class Collection implements \Iterator
 
     /**
      * Получить объект модели по номеру в массиве
+     * 
+     * @return null|DomainMidel\Domainmodel
      */
     private function getRow($num)
     {
@@ -129,10 +147,13 @@ abstract class Collection implements \Iterator
         }
     }
 
+    // TODO: Вроде не нужный метод
     public static function getCollection(string $type)
     {
         return [];
     }
+
+
 
     //Далее реализация методов итератора
 

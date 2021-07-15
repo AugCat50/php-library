@@ -1,8 +1,7 @@
 <?php
 /**
- * В дочерних классах будут также реализованы специальные методы обнаружения данных по заданным критериям 
- * (нам, например, нужно будет найти объекты типа Space, относящиеся к объектам типа Venue). 
- * Этот процесс можно рассматривать и с точки зрения дочернего класса, как показано ниже.
+ * преобразователь данных по шаблону Data Mapper — это класс, который 
+ * отвечает за управление передачей данных из базы данных в отдельный объект VenueModel
  */
 namespace Mapper;
 
@@ -46,9 +45,18 @@ class VenueMapper extends Mapper
                             (int)   $array['id'], 
                             (string)$array['name'] 
                         );
-        // $spaceMapper     = new SpaceMapper();
-        // $spaceCollection = $spaceMapper->findByVenue($array['id']);
-        // $obj->setSpaces($spaceCollection);
+
+        //Создаём коллекцию подконтрольных данной Venue объектов Space
+
+        //Создать маппер для коллекции SpaceCollection
+        $spaceMapper = new SpaceMapper();
+
+        //Получить данные из БД методом маппера, упаковать в коллекцию, вместе с объектом маппером
+        $spaceCollection = $spaceMapper->findByVenue($array['id']);
+
+        //Записать в модель полученную коллекцию
+        $venueModel->setSpaces($spaceCollection);
+
         return $venueModel;
     }
 
@@ -99,8 +107,9 @@ class VenueMapper extends Mapper
      * 
      * @return void
      */
-    public function update(DomainModel $model)
+    protected function doUpdate(DomainModel $model)
     {
+        //получение данных из VenueModel
         //Запросу надо 2 раза передать Id
         $values = [
             $model->getName(),
@@ -110,13 +119,8 @@ class VenueMapper extends Mapper
         $this->updateStmt->execute($values);
     }
 
-
-
-
-//TODO:  Работа с коллекциями
-
     /**
-     * Вернуть имя соответствующей мапперу модели
+     * Получить имя обрабатываемой этим маппером модели для проверки
      * 
      * @return string
      */
@@ -124,6 +128,11 @@ class VenueMapper extends Mapper
     {
         return VenueModel::class;
     }
+
+
+//TODO:  Работа с коллекциями
+
+
 
     public function getCollection(array $raw): Collection
     {

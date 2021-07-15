@@ -1,10 +1,14 @@
-<?php 
+<?php
+/**
+ * преобразователь данных по шаблону Data Mapper — это класс, который 
+ * отвечает за управление передачей данных из базы данных в отдельный объект EventModel
+ */
 namespace Mapper;
 
 use Collections\Collection;
 use DomainModel\EventModel;
 use DomainModel\DomainModel;
-use Collections\VenueCollection;
+use Collections\EventCollection;
 
 class EventMapper extends Mapper
 {
@@ -33,6 +37,17 @@ class EventMapper extends Mapper
     }
 
     /**
+     * Получить имя обрабатываемой этим маппером модели для проверки
+     * Проверка в суперклассе Mapper
+     * 
+     * @return string
+     */
+    protected function targetClass(): string
+    {
+        return EventModel::class;
+    }
+
+    /**
      * Создать объект модели соответствующей мапперу
      * 
      * Поскольку Ивент находится в самом низу иерархии, коллекцию для него создвать пока не будем
@@ -55,6 +70,8 @@ class EventMapper extends Mapper
     /**
      * получить подготовленный оператор SELECT языка SQL
      * Выборку производит метод DomainModel::find()
+     * 
+     * @return string
      */
     public function selectStmt(): \PDOStatement
     {
@@ -64,6 +81,8 @@ class EventMapper extends Mapper
     /**
      * получить подготовленный оператор SELECT языка SQL
      * Выборку производит метод DomainModel::findAll()
+     * 
+     * @return string
      */
     protected function selectAllStmt(): \PDOStatement
     {
@@ -101,8 +120,9 @@ class EventMapper extends Mapper
      * 
      * @return void
      */
-    public function update(DomainModel $model)
+    protected function doUpdate(DomainModel $model)
     {
+        //Получение данных из EventModel
         //Запросу надо 2 раза передать Id
         $values = [
             $model->getSpace(),
@@ -115,19 +135,29 @@ class EventMapper extends Mapper
         $this->updateStmt->execute($values);
     }
 
-
-
-
-
-//TODO: Дальше работа с коллекциями
-
-    protected function targetClass(): string
+    /**
+     * Выбрать из таблицы event все строки у которых поле space = $vid
+     * И создать коллекцию с этими данными
+     * 
+     * По сути, выбирает все подчинённые объекты Event объекту Space
+     * 
+     * @return Collections\EventCollection
+     */
+    public function findBySpace($vid): Collection
     {
-        return EventModel::class;
+        $this->findBySpaceStmt->execute([$vid]);
+
+        //Коллекции необходимо передать массив с данными и объект маппер, для создания из данных объектов
+        //PDOStatement::fetchAll — Возвращает массив, содержащий все строки результирующего набора 
+        return new EventCollection( $this->findBySpaceStmt->fetchAll(), $this );
     }
 
+
+
+
+//TODO: вероятно здесь должна лежить полная выборка данных их таблицы, в целях кеширования
     public function getCollection(array $raw): Collection
     {
-        return new VenueCollection($raw, $this);
+        return new EventCollection($raw, $this);
     }
 }

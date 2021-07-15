@@ -1,5 +1,10 @@
 <?php
-/**
+ /**
+ * Модель для таблицы venue
+ * 
+ * Параметры соответствуют полям тыблицы в БД
+ * Методы get set для обслуживания полей
+ * 
  * Venue содержит в себе Spaces
  */
 namespace DomainModel;
@@ -30,15 +35,6 @@ class VenueModel extends DomainModel
         return $this->name;
     }
 
-    public function getSpaces() : SpaceCollection
-    {
-        if (is_null($this->spaces)) {
-            $reg = Registry::getInstance();
-            $this->spaces = $reg->getSpaceCollection();
-        }
-        return $this->spaces;
-    }
-
     /**
      * Вместо массива в данном классе применяется объект типа SpaceCollection, чтобы
      * сохранять любые объекты типа Space, которые может содержать объект типа Venue
@@ -51,9 +47,19 @@ class VenueModel extends DomainModel
         $this->spaces = $spaces;
     }
 
+    public function getSpaces(): SpaceCollection
+    {
+        if (is_null($this->spaces)) {
+            $reg = Registry::getInstance();
+            $this->spaces = $reg->getSpaceCollection();
+        }
+        return $this->spaces;
+    }
+
     public function addSpace(SpaceModel $space)
     {
         $this->getSpaces()->add($space);
-        $space->setVenue($this);
+        // $space->setVenue($this);
+        $space->setVenue($this->getId());
     }
 }
