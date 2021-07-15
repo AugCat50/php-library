@@ -9,6 +9,8 @@ abstract class DomainModel
 
     public function __construct(int $id)
     {
+        //В случае создания модели для несуществующей строки в БД,
+        //Заданный id игнорируется маппером и создаётся автоматически при выполнении doInsert()
         $this->id = $id;
     }
 

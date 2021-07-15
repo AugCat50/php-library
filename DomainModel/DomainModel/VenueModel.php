@@ -15,7 +15,7 @@ class VenueModel extends DomainModel
     public function __construct(int $id, string $name)
     {
         $this->name = $name;
-        $this->spaces = self::getCollection(Space::class) ;
+        // $this->spaces = self::getCollection(SpaceModel::class) ;
         parent::__construct($id);
     }
 

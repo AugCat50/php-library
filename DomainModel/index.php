@@ -12,9 +12,19 @@
             //Подключение автозагрузчика
             require_once('autoload.php');
             //Точка входа
-            // $mapper = new Mapper\VenueMapper();
-            // $venue  = $mapper->find(2);
-            // d($venue);
+            $mapper = new Mapper\EventMapper();
+            $venue  = new DomainModel\EventModel(3, 2, 'updated text start2', 276, 'Редактированное событие');
+
+            // (int)    $raw['id'],
+            // (int)    $raw['space'],
+            // (string) $raw['start'],
+            // (int)    $raw['duration'],
+            // (string) $raw['name']
+            
+            $mapper->update($venue);
+            // d($mapper,1);
+            $venue  = $mapper->find($venue->getId());
+            d($venue);
 
             // $mapper = new Mapper\VenueMapper();
             // $venue = new VenueModel(-1, "The Likey Lounge");

@@ -11,6 +11,16 @@ class EventModel extends DomainModel
     private $duration;
     private $name;
 
+    public function __construct(int $id, int $space, string $start, int $duration, string $name)
+    {
+        $this->space    = $space;
+        $this->start    = $start;
+        $this->duration = $duration;
+        $this->name     = $name;
+        // $this->events = self::getCollection(EventModel::class) ;
+        parent::__construct($id);
+    }
+
     public function setSpace(int $space)
     {
         $this->space = $space;

@@ -105,6 +105,7 @@ abstract class Mapper
      */
     public function findAll(): Collection
     {
+        //TODO: надо проверить, кажется ничему не присваивается
         $this->selectAllStmt()->execute([]);
 
         //вызывается еще один новый метод getCollection(), которому передаются обнаруженные данные
