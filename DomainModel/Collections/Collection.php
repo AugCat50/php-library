@@ -83,8 +83,8 @@ abstract class Collection implements \Iterator
 
         //Получаем имя класса маппера в дочерней реализации
         $class = $this->targetMapperClass();
-        //Проверяем, что маппер нужного класса
-        if (! ($mapper instanceof $class)) {
+        //Если массив данных не пуст, проверяем, что маппер нужного класса
+        if ( count($raw) && !($mapper instanceof $class)) {
             throw new \Exception("Коллекции необходимо передать маппер типа {$class}");
         }
 

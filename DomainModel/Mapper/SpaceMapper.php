@@ -61,9 +61,9 @@ class SpaceMapper extends Mapper
     protected function doCreateObject(array $array): DomainModel
     {
         $spaceModel  = new SpaceModel( 
-                            (int)   $array['id'], 
-                            (string)$array['name'], 
-                            (int)   $array['venue'] 
+                            (int)    $array['id'], 
+                            (string) $array['name'], 
+                                     $array['venue']
                         );
 
         //Создаём коллекцию подконтрольных данной Space объектов Event
@@ -111,7 +111,7 @@ class SpaceMapper extends Mapper
         //Получение данных из SpaceModel
         $data = [
             $model->getName(),
-            $model->getVenue()
+            $model->getVenue()->getId()
         ];
         $this->insertStmt->execute($data);
 
@@ -134,7 +134,7 @@ class SpaceMapper extends Mapper
         //Запросу надо 2 раза передать Id
         $values = [
             $model->getName(),
-            $model->getVenue(),
+            $model->getVenue()->getId(),
             $model->getId(),
             $model->getId()
         ] ;

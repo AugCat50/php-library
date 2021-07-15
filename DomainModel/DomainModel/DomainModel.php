@@ -1,11 +1,15 @@
 <?php 
 namespace DomainModel;
 
+use Mapper\Mapper;
 use Collections\Collection;
+use IdentityMap\ObjectWatcher;
 
 abstract class DomainModel
 {
     private $id;
+
+    abstract public function getFinder(): Mapper;
 
     /**
      * Конструктор
@@ -15,9 +19,15 @@ abstract class DomainModel
      * 
      * @param int $id
      */
-    public function __construct(int $id)
+    public function __construct(int $id = -1)
     {
         $this->id = $id;
+
+        //Если не передан id, объект помечается как новый
+        //WARNING:: новые объекты могут автоматически попадать на сохранение в базу данных
+        if ($id < 0) {
+            $this->markNew();
+        }
     }
 
     public function setId(int $id)
@@ -38,8 +48,25 @@ abstract class DomainModel
         return Collection::getCollection($type);
     }
 
+
+    //Unit of Work methods
+    public function markNew()
+    {
+        ObjectWatcher::addNew($this);
+    }
+
+    public function markDeleted()
+    {
+        ObjectWatcher::addDelete($this);
+    }
+
     public function markDirty()
     {
-        // Для шаблона Unit of Work
+        ObjectWatcher::addDirty($this);
+    }
+
+    public function markClean()
+    {
+        ObjectWatcher::addClean($this) ;
     }
 }

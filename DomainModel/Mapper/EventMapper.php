@@ -58,10 +58,10 @@ class EventMapper extends Mapper
     {
         $eventModel = new EventModel( 
                         (int)    $raw['id'],
-                        (int)    $raw['space'],
                         (string) $raw['start'],
                         (int)    $raw['duration'],
-                        (string) $raw['name']
+                        (string) $raw['name'],
+                                 $raw['space']
                     );
         return $eventModel;
     }
@@ -100,7 +100,7 @@ class EventMapper extends Mapper
     {
         //Получение данных из EventModel
         $values = [
-            $model->getSpace(),
+            $model->getSpace()->getId(),
             $model->getStart(),
             $model->getDuration(),
             $model->getName()
@@ -125,7 +125,7 @@ class EventMapper extends Mapper
         //Получение данных из EventModel
         //Запросу надо 2 раза передать Id
         $values = [
-            $model->getSpace(),
+            $model->getSpace()->getId(),
             $model->getStart(),
             $model->getDuration(),
             $model->getName(),

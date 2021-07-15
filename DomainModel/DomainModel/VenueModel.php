@@ -12,6 +12,9 @@ namespace DomainModel;
 use Registry\Registry;
 use Collections\SpaceCollection;
 
+use Mapper\Mapper;
+use Mapper\VenueMapper;
+
 class VenueModel extends DomainModel
 {
     private $name;
@@ -59,7 +62,12 @@ class VenueModel extends DomainModel
     public function addSpace(SpaceModel $space)
     {
         $this->getSpaces()->add($space);
-        // $space->setVenue($this);
-        $space->setVenue($this->getId());
+        $space->setVenue($this);
+        // $space->setVenue($this->getId());
+    }
+
+    public function getFinder(): Mapper
+    {
+        return new VenueMapper();
     }
 }

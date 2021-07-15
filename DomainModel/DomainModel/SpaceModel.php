@@ -12,13 +12,40 @@ namespace DomainModel;
 use Collections\EventCollection;
 use Registry\Registry;
 
+use Mapper\Mapper;
+use Mapper\SpaceMapper;
+
 class SpaceModel extends DomainModel
 {
     private $venue;
     private $name;
     private $events;
 
-    public function __construct(int $id, string $name, int $venue)
+    // public function __construct(int $id, string $name, int $venue)
+    // {
+    //     $this->name  = $name;
+    //     $this->venue = $venue;
+    //     // $this->events = self::getCollection(EventModel::class) ;
+    //     parent::__construct($id);
+    // }
+
+    // public function setVenue(int $venue)
+    // {
+    //     $this->venue = $venue;
+    //     $this->markDirty();
+    // }
+
+    // public function getVenue(): int
+    // {
+    //     return $this->venue;
+    // }
+
+    /**
+     * В объекте SpaceModel надо сохранять объект, который на этот Space ссылается(VenueModel).
+     * Это необходимо для шаблона Unit of Work, сначала в БД сохраняется старший объект (VenueModel)
+     * и только после этого можно получить его id для сохранения Space. До этого id может не быть.
+     */
+    public function __construct(int $id, string $name, VenueModel $venue = null)
     {
         $this->name  = $name;
         $this->venue = $venue;
@@ -26,13 +53,13 @@ class SpaceModel extends DomainModel
         parent::__construct($id);
     }
 
-    public function setVenue(int $venue)
+    public function setVenue(VenueModel $venue)
     {
         $this->venue = $venue;
         $this->markDirty();
     }
 
-    public function getVenue(): int
+    public function getVenue(): VenueModel
     {
         return $this->venue;
     }
@@ -72,7 +99,12 @@ class SpaceModel extends DomainModel
     public function addEvent(EventModel $event)
     {
         $this->getEvents()->add($event);
-        // $event->setSpace($this);
-        $event->setSpace($this->getId());
+        $event->setSpace($this);
+        // $event->setSpace($this->getId());
+    }
+
+    public function getFinder(): Mapper
+    {
+        return new SpaceMapper();
     }
 }

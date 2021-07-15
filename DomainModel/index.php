@@ -16,21 +16,39 @@
             // $venue  = new DomainModel\VenueModel();
 
             //Тестирование IdentityMap
-            $mapper = new Mapper\VenueMapper();
-            $venue  = new DomainModel\VenueModel(-1, "Какой-то текст");
+            // $mapper = new Mapper\VenueMapper();
+            // $venue  = new DomainModel\VenueModel(-1, "Какой-то текст");
 
-            d($venue);
+            // d($venue);
 
-            $mapper->insert($venue);
+            // $mapper->insert($venue);
 
-            $venue2 = $mapper->find($venue->getId());
-            d($venue2);
+            // $venue2 = $mapper->find($venue->getId());
+            // d($venue2);
 
-            $venue2->setName("Изменённый текст");
+            // $venue2->setName("Изменённый текст");
 
-            $mapper->update($venue2);
-            $venue3 = $mapper->find($venue->getId());
-            d($venue3);
+            // $mapper->update($venue2);
+            // $venue3 = $mapper->find($venue->getId());
+            // d($venue3);
+
+
+            $venue = new DomainModel\VenueModel(-1, "The Green Trees");
+            $venue->addSpace(
+                new DomainModel\SpaceModel(-1, 'The Space Upstairs')
+            );
+            $venue->addSpace(
+                new DomainModel\SpaceModel (-1, 'The Bar Stage')
+            );
+
+            // Этот метод может быть вызван из контроллера
+            // или вспомогательного класса
+
+            //Контроллер высокого уровня обычно вызывает метод performOperations (),
+            // и поэтому, как правило, достаточно создать или модифицировать объект, а класс
+            // (в данном случае — ObjectWatcher), созданный по шаблону Unit of Work,
+            // выполнит свои обязанности только один раз в конце запроса.
+            IdentityMap\ObjectWatcher::getInstance()->performOperations();
         ?>
     </body>
 </html>
