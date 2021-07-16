@@ -32,13 +32,24 @@
             // $venue3 = $mapper->find($venue->getId());
             // d($venue3);
 
+            //Тестирование зависимости venue -> space
+            // $venue = new DomainModel\VenueModel(-1, "The Green Trees111");
+            // $venue->addSpace(
+            //     new DomainModel\SpaceModel(-1, 'The Space Upstairs2222', -1)
+            // );
+            // $venue->addSpace(
+            //     new DomainModel\SpaceModel (-1, 'The Bar Stage333', -1)
+            // );
 
-            $venue = new DomainModel\VenueModel(-1, "The Green Trees");
-            $venue->addSpace(
-                new DomainModel\SpaceModel(-1, 'The Space Upstairs')
+            //тестирование зависимости space -> event
+            $mapper = new Mapper\VenueMapper();
+            $venue1 = $mapper->find(4);
+            $venue = new DomainModel\SpaceModel(-1, "The Green Trees", $venue1->getId(), $venue1);
+            $venue->addEvent(
+                new DomainModel\EventModel(-1, 'Старт1', 111, 'Событие1', -1)
             );
-            $venue->addSpace(
-                new DomainModel\SpaceModel (-1, 'The Bar Stage')
+            $venue->addEvent(
+                new DomainModel\EventModel (-1, 'Старт2', 123, 'Событие2', -1)
             );
 
             // Этот метод может быть вызван из контроллера
@@ -49,6 +60,19 @@
             // (в данном случае — ObjectWatcher), созданный по шаблону Unit of Work,
             // выполнит свои обязанности только один раз в конце запроса.
             IdentityMap\ObjectWatcher::getInstance()->performOperations();
+
+
+            // $mapper = new Mapper\SpaceMapper();
+            // $spece  = $mapper->find(2);
+            // // d($spece);
+            // $events = $spece->getEvents();
+            // d($events);
+
+            // $f = new DomainObjectFactory\SpaceObjectFactory();
+            // d($f instanceof DomainObjectFactory\DomainObjectFactory);
+            // $mapper = new Mapper\VenueMapper();
+            // $obj = $mapper->find(1);
+            // d($obj->getSpaces());
         ?>
     </body>
 </html>

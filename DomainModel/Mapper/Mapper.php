@@ -10,20 +10,28 @@ namespace Mapper;
 
 use Registry\Registry;
 use Collections\Collection;
-use DomainModel\VenueModel;
 use DomainModel\DomainModel;
-use IdentityMap\ObjectWatcher;
+use DomainObjectFactory\DomainObjectFactory;
+
+// use DomainModel\VenueModel;
+// use IdentityMap\ObjectWatcher;
+// use DomainObjectFactory\EventObjectFactory;
+// use DomainObjectFactory\SpaceObjectFactory;
+// use DomainObjectFactory\VenueObjectFactory;
 
 abstract class Mapper
 {
     protected $pdo;
     protected $reg;
+    protected $factory;
 
-    abstract protected function doCreateObject(array $raw): DomainModel;
+    // abstract protected function doCreateObject(array $raw): DomainModel;
     abstract protected function doInsert(DomainModel $model);
     abstract protected function doUpdate(DomainModel $model);
     abstract protected function selectStmt(): \PDOStatement;
     abstract protected function targetClass(): string;
+
+    abstract protected function getFactory(): DomainObjectFactory;
 
     /**
      * Абстрактные методы getCollection() и selectAllStmt(), чтобы все объекты типа Mapper могли
@@ -37,6 +45,9 @@ abstract class Mapper
         $this->reg = Registry::getInstance();
         $this->reg->setPdo();
         $this->pdo = $this->reg->getPdo();
+
+        //Получить объект фабрики для генерации объектов и работы с ObjectWatcher
+        $this->factory = $this->getFactory();
     }
 
     //Можно создавать объект Mapper в реестре, в таком случае, конструктор может выглядеть так
@@ -53,7 +64,7 @@ abstract class Mapper
     {
         //Сначала проверить наличие ссылки на объект в ObjectWatcher (IdentityMap)
         //Если таковой уже имеется, возвращаем, если нет, идём дальше
-        $old = $this->getFromMap($id);
+        $old = $this->factory->getFromMap($id);
         if (! is_null($old)) {
             return $old;
         }
@@ -69,12 +80,6 @@ abstract class Mapper
 
         /**
          * PDOStatement::closeCursor — освобождает соединение с сервером, давая возможность запускать другие SQL-запросы.
-         * 
-         * Метод оставляет запрос в состоянии готовности к повторному запуску. 
-         * Этот метод полезен при использовании драйверов баз данных, которые не позволяют запустить PDOStatement, 
-         * пока предыдущий объект PDOStatement не выберет все данные из результирующего набора. 
-         * Если это ограничение распространяется на ваш драйвер, будет вызвана ошибка нарушения последовательности запросов (out-of-sequence error). 
-         * 
          * @see https://www.php.net/manual/ru/pdostatement.closecursor.php
          */
         $this->selectStmt()->closeCursor();
@@ -95,27 +100,29 @@ abstract class Mapper
     /**
      * метод createObject(), делегирует свои полномочия дочерней реализации
      */
-    public function createObject(array $raw): DomainModel
-    {
-        //Сначала проверить наличие ссылки на объект в ObjectWatcher (IdentityMap)
-        //Если таковой уже имеется, возвращаем, если нет, идём дальше
-        $old = $this->getFromMap($raw['id']);
-        if (! is_null($old)) {
-            return $old;
-        }
+    // public function createObject(array $raw): DomainModel
+    // {
+    //     //Сначала проверить наличие ссылки на объект в ObjectWatcher (IdentityMap)
+    //     //Если таковой уже имеется, возвращаем, если нет, идём дальше
+    //     $old = $this->getFromMap($raw['id']);
+    //     if (! is_null($old)) {
+    //         return $old;
+    //     }
 
-        //Создать объект
-        $obj = $this->doCreateObject($raw);
+    //     //Создать объект
+    //     $obj = $this->doCreateObject($raw);
 
-        //Сохранить ссылку на объект в ObjectWatcher (IdentityMap)
-        $this->addToMap($obj);
-        return $obj;
-    }
+    //     //Сохранить ссылку на объект в ObjectWatcher (IdentityMap)
+    //     $this->addToMap($obj);
+    //     return $obj;
+    // }
+
 
     public function insert(DomainModel $model)
     {
         //Получаем имя класса в дочерней реализации
         $class = $this->targetClass();
+        
         //Проверяем, что модель нужного класса
         if (! ($model instanceof $class)) {
             throw new \Exception("Мапперу должен быть передан объект типа {$class}");
@@ -124,13 +131,14 @@ abstract class Mapper
         $this->doInsert($model);
 
         //Сохранить  ссылку на объект в ObjectWatcher (IdentityMap)
-        $this->addToMap($model);
+        $this->factory->addToMap($model);
     }
 
     public function update(DomainModel $model)
     {
         //Получаем имя класса в дочерней реализации
         $class = $this->targetClass();
+
         //Проверяем, что модель нужного класса
         if (! ($model instanceof $class)) {
             throw new \Exception("Мапперу должен быть передан объект типа {$class}");
@@ -139,30 +147,38 @@ abstract class Mapper
         $this->doUpdate($model);
     }
 
-    /**
-     * Блок общения с ObjectWatcher (IdentityMap)
-     * 
-     * В данном классе предусмотрены два удобных метода — addToMap() и getFromMap(). 
-     * Это дает возможность не запоминать полный синтаксис статического обращения к классу ObjectWatcher
-     * 
-     * @param int $id
-     * 
-     * @return null|object
-     */
-    private function getFromMap(int $id)
+    public function createObject(array $raw): DomainModel
     {
-        return ObjectWatcher::exists( $this->targetClass(), $id );
+        $model = $this->factory->createObject($raw);
+        return $model;
     }
 
-    /**
-     * @param DomainModel $model
-     * 
-     * @return null
-     */
-    private function addToMap(DomainModel $model)
-    {
-        ObjectWatcher::add($model);
-    }
+    // /**
+    //  * Блок общения с ObjectWatcher (IdentityMap)
+    //  * 
+    //  * В данном классе предусмотрены два удобных метода — addToMap() и getFromMap(). 
+    //  * Это дает возможность не запоминать полный синтаксис статического обращения к классу ObjectWatcher
+    //  * 
+    //  * @param int $id
+    //  * 
+    //  * @return null|object
+    //  */
+    // private function getFromMap(int $id)
+    // {
+    //     return ObjectWatcher::exists( $this->targetClass(), $id );
+    // }
+
+    // /**
+    //  * @see getFromMap()
+    //  * 
+    //  * @param DomainModel $model
+    //  * 
+    //  * @return null
+    //  */
+    // private function addToMap(DomainModel $model)
+    // {
+    //     ObjectWatcher::add($model);
+    // }
 
 
 
@@ -192,11 +208,4 @@ abstract class Mapper
         //вызывается еще один новый метод getCollection(), которому передаются обнаруженные данные
         return $this->getCollection( $this->selectAllStmt()->fetchAll() ) ;
     }
-
-
-
-
-
-
-
 }

@@ -1,4 +1,10 @@
-<?php 
+<?php
+/**
+ * Суперкласс моделей
+ * Реализует методы get set для работы с ID,
+ * так же реализует делегирующие методы шаблона Unit of Work класса ObjectWatcher,
+ * для постановки задач на работу с БД
+ */
 namespace DomainModel;
 
 use Mapper\Mapper;
@@ -40,13 +46,7 @@ abstract class DomainModel
         return $this->id;
     }
 
-    //TODO: пока не очевидно, надо ли получать пустую коллекцию. Пусть пока будет
-    // public static function getCollection(string $type): Collection
-    public static function getCollection(string $type)
-    {
-        // фиктивная реализация
-        return Collection::getCollection($type);
-    }
+
 
 
     //Unit of Work methods
@@ -68,5 +68,16 @@ abstract class DomainModel
     public function markClean()
     {
         ObjectWatcher::addClean($this) ;
+    }
+
+
+
+
+    //TODO: пока не очевидно, надо ли получать пустую коллекцию. Пусть пока будет
+    // public static function getCollection(string $type): Collection
+    public static function getCollection(string $type)
+    {
+        // фиктивная реализация
+        return Collection::getCollection($type);
     }
 }

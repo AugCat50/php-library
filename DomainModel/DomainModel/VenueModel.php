@@ -63,9 +63,13 @@ class VenueModel extends DomainModel
     {
         $this->getSpaces()->add($space);
         $space->setVenue($this);
-        // $space->setVenue($this->getId());
     }
 
+    /**
+     * Получить объект Маппер соответствующий данной модели
+     * 
+     * @return Mapper\VenueMapper
+     */
     public function getFinder(): Mapper
     {
         return new VenueMapper();

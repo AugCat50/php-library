@@ -13,6 +13,8 @@ use DomainModel\SpaceModel;
 use DomainModel\VenueModel;
 use DomainModel\DomainModel;
 use Collections\SpaceCollection;
+use DomainObjectFactory\DomainObjectFactory;
+use DomainObjectFactory\SpaceObjectFactory;
 // use Collections\EventCollection;
 
 class SpaceMapper extends Mapper
@@ -30,73 +32,11 @@ class SpaceMapper extends Mapper
         $this->selectStmt = $this->pdo->prepare("SELECT * FROM space WHERE id=?");
         $this->updateStmt = $this->pdo->prepare("UPDATE space SET name=?, venue=?, id=? WHERE id=?");
         $this->insertStmt = $this->pdo->prepare("INSERT INTO space ( name, venue ) VALUES ( ?, ? )");
+        
+        $this->selectAllStmt = $this->pdo->prepare("SELECT * FROM space");
 
-
-        $this->selectAllStmt   = $this->pdo->prepare("SELECT * FROM space");
-
-        //Здесь внедрен еще один оператор, $findByVenueStmt, предназначенный для 
-        //выборки объектов типа Space, характерных для отдельного объекта типа Venue.
+        //Оператор $findByVenueStmt предназначен для выборки объектов типа Space, характерных для отдельного объекта типа Venue.
         $this->findByVenueStmt = $this->pdo->prepare("SELECT * FROM space where venue=?");
-    }
-
-    /**
-     * Получить имя обрабатываемой этим маппером модели для проверки
-     * Проверка в суперклассе Mapper
-     * 
-     * @return string
-     */
-    protected function targetClass(): string
-    {
-        return SpaceModel::class;
-    }
-
-    /**
-     * Создать объект модели соответствующей мапперу
-     * 
-     * Создаётся коллекция типа EventCollection 
-     * для каждого создаваемого объекта типа SpaceModel.
-     * 
-     * @return DomainModel\SpaceModel
-     */
-    protected function doCreateObject(array $array): DomainModel
-    {
-        $spaceModel  = new SpaceModel( 
-                            (int)    $array['id'], 
-                            (string) $array['name'], 
-                                     $array['venue']
-                        );
-
-        //Создаём коллекцию подконтрольных данной Space объектов Event
-
-        //Создать маппер для коллекции EventCollection
-        $eventMapper = new EventMapper();
-
-        //Получить данные из БД методом маппера, упаковать в коллекцию, вместе с объектом маппером
-        $eventCollection = $eventMapper->findBySpace($array['id']);
-
-        //Записать в модель полученную коллекцию
-        $spaceModel->setEvents($eventCollection);
-
-        return $spaceModel;
-    }
-
-
-    /**
-     * получить подготовленный оператор SELECT языка SQL
-     * Выборку производит метод DomainModel::find()
-     */
-    public function selectStmt(): \PDOStatement
-    {
-        return $this->selectStmt;
-    }
-
-    /**
-     * получить подготовленный оператор SELECT языка SQL
-     * Выборку производит метод DomainModel::findAll()
-     */
-    protected function selectAllStmt(): \PDOStatement
-    {
-        return $this->selectAllStmt;
     }
 
     /**
@@ -141,8 +81,6 @@ class SpaceMapper extends Mapper
         $this->updateStmt->execute($values);
     }
 
-
-
     /**
      * Выбрать из таблицы space все строки у которых поле venue = $vid
      * И создать коллекцию с этими данными
@@ -160,7 +98,55 @@ class SpaceMapper extends Mapper
         return new SpaceCollection( $this->findByVenueStmt->fetchAll(), $this );
     }
 
-//TODO: Работа с коллекциями
+
+
+
+    //Далее следуют служебные методы
+    /**
+     * Служебный метод.
+     * Получить подготовленный оператор SELECT языка SQL 
+     * Выборку производит метод суперкласса Mapper::find()
+     * 
+     * @return \PDOStatement
+     */
+    public function selectStmt(): \PDOStatement
+    {
+        return $this->selectStmt;
+    }
+
+    /**
+     * Служебный метод.
+     * Получить подготовленный оператор SELECT языка SQL
+     * Выборку производит метод суперкласса Mapper::findAll()
+     * 
+     * @return \PDOStatement
+     */
+    protected function selectAllStmt(): \PDOStatement
+    {
+        return $this->selectAllStmt;
+    }
+
+    /**
+     * Служебный метод.
+     * Получить имя обрабатываемой этим маппером модели для проверки. Проверка в суперклассе
+     * 
+     * @return string
+     */
+    protected function targetClass(): string
+    {
+        return SpaceModel::class;
+    }
+
+    /**
+     * Служебный метод. 
+     * Вызывается в конструкторе сперкласса. Возвращает объект фабрики моделей
+     * 
+     * @return DomainObjectFactory\SpaceObjectFactory
+     */
+    protected function getFactory(): DomainObjectFactory
+    {
+        return new SpaceObjectFactory();
+    }
 
 
 
@@ -170,11 +156,15 @@ class SpaceMapper extends Mapper
 
 
 
+
+
+
+
+
+    //TODO: Работа с коллекциями
     public function getCollection(array $raw): Collection
     {
         return new SpaceCollection($raw, $this);
     }
-
-
 }
 

@@ -5,14 +5,23 @@
  * 
  * можно добавить методы elementAt(), deleteAt(), count()
  * можно применить генератор вместо итератора
+ * 
+ * Мы скрыли за этим интерфейсом тот секретный факт, что исходные данные, извлекаемые из базы данных, могли быть еще не использованы
+ * для получения экземпляра объекта предметной области в момент обращения к нему из клиентского кода.
+ * 
+ * Помимо типовой безопасности, особое преимущество от применения для свойств не массива, а коллекции заключается в возможности 
+ * откорректировать процесс загрузки по требованию, если в этом возникнет потребность
  */
 namespace Collections;
 
 use Mapper\Mapper;
 use DomainModel\DomainModel;
+use DomainObjectFactory\DomainObjectFactory;
 
 abstract class Collection implements \Iterator
 {
+    protected $dofact = null;
+
     /**
      * Объект типа Mapper
      * 
@@ -92,6 +101,15 @@ abstract class Collection implements \Iterator
         $this->total  = count($raw);
         $this->mapper = $mapper;
     }
+
+    // public function __construct(array $raw = [], DomainObjectFactory $dofact = null)
+    // {
+    //     if (count($raw) && ! is_null($dofact) ) {
+    //         $this->raw = $raw;
+    //         $this->total = count($raw);
+    //     }
+    //     $this->dofact = $dofact;
+    // }   
 
     /**
      * Метод для добавления объектов модели в коллекцию

@@ -9,6 +9,9 @@ use Collections\Collection;
 use DomainModel\EventModel;
 use DomainModel\DomainModel;
 use Collections\EventCollection;
+use Collections\DeferredEventCollection;
+use DomainObjectFactory\DomainObjectFactory;
+use DomainObjectFactory\EventObjectFactory;
 
 class EventMapper extends Mapper
 {
@@ -19,9 +22,6 @@ class EventMapper extends Mapper
     private $selectAllStmt;
     private $findBySpaceStmt;
 
-    /**
-     * Заранее подготавливаем запросы к БД
-     */
     public function __construct()
     {
         parent::__construct();
@@ -31,62 +31,8 @@ class EventMapper extends Mapper
 
         $this->selectAllStmt = $this->pdo->prepare("SELECT * FROM some_event");
 
-        //Здесь внедрен еще один оператор, $findBySpaceStmt, предназначенный для 
-        //выборки объектов типа Event, характерных для отдельного объекта типа Space.
+        //Оператор $findBySpaceStmt, предназначен для выборки объектов типа Event, характерных для отдельного объекта типа Space.
         $this->findBySpaceStmt = $this->pdo->prepare("SELECT * FROM some_event where space=?");
-    }
-
-    /**
-     * Получить имя обрабатываемой этим маппером модели для проверки
-     * Проверка в суперклассе Mapper
-     * 
-     * @return string
-     */
-    protected function targetClass(): string
-    {
-        return EventModel::class;
-    }
-
-    /**
-     * Создать объект модели соответствующей мапперу
-     * 
-     * Поскольку Ивент находится в самом низу иерархии, коллекцию для него создвать пока не будем
-     * 
-     * @return DomainModel\EventModel
-     */
-    protected function doCreateObject(array $raw): DomainModel
-    {
-        $eventModel = new EventModel( 
-                        (int)    $raw['id'],
-                        (string) $raw['start'],
-                        (int)    $raw['duration'],
-                        (string) $raw['name'],
-                                 $raw['space']
-                    );
-        return $eventModel;
-    }
-
-
-    /**
-     * получить подготовленный оператор SELECT языка SQL
-     * Выборку производит метод DomainModel::find()
-     * 
-     * @return string
-     */
-    public function selectStmt(): \PDOStatement
-    {
-        return $this->selectStmt;
-    }
-
-    /**
-     * получить подготовленный оператор SELECT языка SQL
-     * Выборку производит метод DomainModel::findAll()
-     * 
-     * @return string
-     */
-    protected function selectAllStmt(): \PDOStatement
-    {
-        return $this->selectAllStmt;
     }
 
     /**
@@ -151,6 +97,79 @@ class EventMapper extends Mapper
         //PDOStatement::fetchAll — Возвращает массив, содержащий все строки результирующего набора 
         return new EventCollection( $this->findBySpaceStmt->fetchAll(), $this );
     }
+
+    /**
+     * 
+     */
+    public function findBySpaceId(int $spaceId)
+    {
+        //Объект маппер
+        //подготовленный SQL оператор
+        //Массив параметров нужных SQL оператору (в данном случае один)
+        return new DeferredEventCollection (
+                                        $this,
+                                        $this->findBySpaceStmt,
+                                        [$spaceId]
+                                    );
+    }
+
+
+
+
+
+    //Далее идут служебные методы
+    /**
+     * Служебный метод.
+     * Получить подготовленный оператор SELECT языка SQL 
+     * Выборку производит метод суперкласса Mapper::find()
+     * 
+     * @return \PDOStatement
+     */
+    public function selectStmt(): \PDOStatement
+    {
+        return $this->selectStmt;
+    }
+
+    /**
+     * Служебный метод.
+     * Получить подготовленный оператор SELECT языка SQL
+     * Выборку производит метод суперкласса Mapper::findAll()
+     *
+     * @return \PDOStatement
+     */
+    protected function selectAllStmt(): \PDOStatement
+    {
+        return $this->selectAllStmt;
+    }
+
+    /**
+     * Служебный метод.
+     * Получить имя обрабатываемой этим маппером модели для проверки. Проверка в суперклассе
+     * 
+     * @return string
+     */
+    protected function targetClass(): string
+    {
+        return EventModel::class;
+    }
+
+    /**
+     * Служебный метод. 
+     * Вызывается в конструкторе сперкласса. Возвращает объект фабрики моделей
+     * 
+     * @return DomainObjectFactory\EventObjectFactory
+     */
+    protected function getFactory(): DomainObjectFactory
+    {
+        return new EventObjectFactory();
+    }
+
+
+
+
+
+
+
 
 
 

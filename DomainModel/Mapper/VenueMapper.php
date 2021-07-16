@@ -9,6 +9,8 @@ use Collections\Collection;
 use DomainModel\VenueModel;
 use DomainModel\DomainModel;
 use Collections\VenueCollection;
+use DomainObjectFactory\DomainObjectFactory;
+use DomainObjectFactory\VenueObjectFactory;
 
 class VenueMapper extends Mapper
 {
@@ -18,9 +20,6 @@ class VenueMapper extends Mapper
 
     private $selectAllStmt;
 
-    /**
-     * Заранее подготавливаем запросы к БД
-     */
     public function __construct()
     {
         parent::__construct();
@@ -30,54 +29,6 @@ class VenueMapper extends Mapper
 
         $this->selectAllStmt = $this->pdo->prepare("SELECT * FROM venue");
     }
-
-    /**
-     * Создать объект модели соответствующей мапперу
-     * 
-     * Создаётся коллекция типа SpaceCollection 
-     * для каждого создаваемого объекта типа VenueModel.
-     * 
-     * @return DomainModel\VenueModel
-     */
-    protected function doCreateObject(array $array): DomainModel
-    {
-        $venueModel = new VenueModel( 
-                            (int)   $array['id'], 
-                            (string)$array['name'] 
-                        );
-
-        //Создаём коллекцию подконтрольных данной Venue объектов Space
-
-        //Создать маппер для коллекции SpaceCollection
-        $spaceMapper = new SpaceMapper();
-
-        //Получить данные из БД методом маппера, упаковать в коллекцию, вместе с объектом маппером
-        $spaceCollection = $spaceMapper->findByVenue($array['id']);
-
-        //Записать в модель полученную коллекцию
-        $venueModel->setSpaces($spaceCollection);
-
-        return $venueModel;
-    }
-
-    /**
-     * получить подготовленный оператор SELECT языка SQL
-     * Выборку производит метод DomainModel::find()
-     */
-    public function selectStmt(): \PDOStatement
-    {
-        return $this->selectStmt;
-    }
-
-    /**
-     * получить подготовленный оператор SELECT языка SQL
-     * Выборку производит метод DomainModel::findAll()
-     */
-    protected function selectAllStmt(): \PDOStatement
-    {
-        return $this->selectAllStmt;
-    }
-
 
     /**
      * Операция добавления новой строки в таблицу venue
@@ -119,8 +70,42 @@ class VenueMapper extends Mapper
         $this->updateStmt->execute($values);
     }
 
+
+
+
+
+
+
+
+
+    //Далее следуют служебные методы
     /**
-     * Получить имя обрабатываемой этим маппером модели для проверки
+     * Служебный метод.
+     * Получить подготовленный оператор SELECT языка SQL 
+     * Выборку производит метод суперкласса Mapper::find()
+     * 
+     * @return \PDOStatement
+     */
+    public function selectStmt(): \PDOStatement
+    {
+        return $this->selectStmt;
+    }
+
+    /**
+     * Служебный метод.
+     * Получить подготовленный оператор SELECT языка SQL
+     * Выборку производит метод суперкласса Mapper::find()
+     * 
+     * @return \PDOStatement
+     */
+    protected function selectAllStmt(): \PDOStatement
+    {
+        return $this->selectAllStmt;
+    }
+
+    /**
+     * Служебный метод.
+     * Получить имя обрабатываемой этим маппером модели для проверки. Проверка в суперклассе
      * 
      * @return string
      */
@@ -129,11 +114,22 @@ class VenueMapper extends Mapper
         return VenueModel::class;
     }
 
+    /**
+     * Служебный метод. 
+     * Вызывается в конструкторе сперкласса. Возвращает объект фабрики моделей
+     * 
+     * @return DomainObjectFactory\VenueObjectFactory
+     */
+    protected function getFactory(): DomainObjectFactory
+    {
+        return new VenueObjectFactory();
+    }
+
+
+
+
 
 //TODO:  Работа с коллекциями
-
-
-
     public function getCollection(array $raw): Collection
     {
         return new VenueCollection($raw, $this);
