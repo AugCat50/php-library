@@ -23,7 +23,7 @@ abstract class Mapper
 {
     protected $pdo;
     protected $reg;
-    protected $factory;
+    protected $factory = null;
 
     // abstract protected function doCreateObject(array $raw): DomainModel;
     abstract protected function doInsert(DomainModel $model);

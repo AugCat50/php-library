@@ -14,7 +14,7 @@
 namespace Collections;
 
 use DomainModel\EventModel;
-use Mapper\EventMapper;
+use DomainObjectFactory\EventObjectFactory;
 
 class EventCollection extends Collection
 {
@@ -30,13 +30,13 @@ class EventCollection extends Collection
     }
 
     /**
-     * Возвращает имя класса Маппера
-     * Используется для проверки, дочерняя коллекция должна получить конкретный тип маппера
+     * Возвращает имя класса фабрики моделей
+     * Используется для проверки, дочерняя коллекция должна получить фабрику для своего типа моделей
      * 
      * @return string
      */
-    public function targetMapperClass(): string
+    public function targetFactoryClass(): string
     {
-        return EventMapper::class;
+        return EventObjectFactory::class;
     }
 }

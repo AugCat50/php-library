@@ -41,16 +41,16 @@
             //     new DomainModel\SpaceModel (-1, 'The Bar Stage333', -1)
             // );
 
-            //тестирование зависимости space -> event
-            $mapper = new Mapper\VenueMapper();
-            $venue1 = $mapper->find(4);
-            $venue = new DomainModel\SpaceModel(-1, "The Green Trees", $venue1->getId(), $venue1);
-            $venue->addEvent(
-                new DomainModel\EventModel(-1, 'Старт1', 111, 'Событие1', -1)
-            );
-            $venue->addEvent(
-                new DomainModel\EventModel (-1, 'Старт2', 123, 'Событие2', -1)
-            );
+            // //тестирование зависимости space -> event
+            // $mapper = new Mapper\VenueMapper();
+            // $venue1 = $mapper->find(4);
+            // $venue = new DomainModel\SpaceModel(-1, "The Green Trees", $venue1->getId(), $venue1);
+            // $venue->addEvent(
+            //     new DomainModel\EventModel(-1, 'Старт1', 111, 'Событие1', -1)
+            // );
+            // $venue->addEvent(
+            //     new DomainModel\EventModel (-1, 'Старт2', 123, 'Событие2', -1)
+            // );
 
             // Этот метод может быть вызван из контроллера
             // или вспомогательного класса
@@ -59,7 +59,7 @@
             // и поэтому, как правило, достаточно создать или модифицировать объект, а класс
             // (в данном случае — ObjectWatcher), созданный по шаблону Unit of Work,
             // выполнит свои обязанности только один раз в конце запроса.
-            IdentityMap\ObjectWatcher::getInstance()->performOperations();
+            // IdentityMap\ObjectWatcher::getInstance()->performOperations();
 
 
             // $mapper = new Mapper\SpaceMapper();
@@ -73,6 +73,16 @@
             // $mapper = new Mapper\VenueMapper();
             // $obj = $mapper->find(1);
             // d($obj->getSpaces());
+
+                //Вызов метода field () приводит к созданию объекта типа Field и присвоению ссылки на него свойству $currentfield.
+            // $idobj = new IdentityObject\IdentityObject();
+            // $idobj ->field ("name")
+            // ->eq("The Good Show");
+
+            // d($idobj);
+
+            $vuf = new UpdateFactory\VenueUpdateFactory();
+            print_r($vuf->newUpdate(new DomainModel\VenueModel(2, "The Happy Hairband")));
         ?>
     </body>
 </html>

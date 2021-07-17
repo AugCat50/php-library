@@ -20,7 +20,7 @@ use DomainObjectFactory\DomainObjectFactory;
 
 abstract class Collection implements \Iterator
 {
-    protected $dofact = null;
+    protected $factory = null;
 
     /**
      * Объект типа Mapper
@@ -66,12 +66,12 @@ abstract class Collection implements \Iterator
     abstract public function targetClass(): string;
 
     /**
-     * Возвращает имя класса Маппера
-     * Используется для проверки, дочерняя коллекция должна получить конкретный тип маппера
+     * Возвращает имя класса фабрики моделей
+     * Используется для проверки, дочерняя коллекция должна получить фабрику для своего типа моделей
      * 
      * @return string
      */
-    abstract public function targetMapperClass(): string;
+    abstract public function targetFactoryClass(): string;
 
     /**
      * В конструктор передаётся массив данных, полученный из БД и объект Mapper,
@@ -83,33 +83,51 @@ abstract class Collection implements \Iterator
      * 
      * @return void
      */
-    public function __construct(array $raw = [], Mapper $mapper = null)
+    public function __construct(array $raw = [], DomainObjectFactory $factory = null)
     {
         //Если есть $raw, обязательно нужен Mapper для обработки
-        if (count($raw) && is_null($mapper)) {
-            throw new \Exception("Нужен объект типа Mapper для создания объектов");
+        if (count($raw) && is_null($factory)) {
+            throw new \Exception("Collection(109): Нужен объект типа DomainObjectFactory для создания объектов");
         }
 
-        //Получаем имя класса маппера в дочерней реализации
-        $class = $this->targetMapperClass();
-        //Если массив данных не пуст, проверяем, что маппер нужного класса
-        if ( count($raw) && !($mapper instanceof $class)) {
-            throw new \Exception("Коллекции необходимо передать маппер типа {$class}");
+        //Получаем имя класса фабрики в дочерней реализации
+        $class = $this->targetFactoryClass();
+
+        //Если массив данных не пуст, проверяем, что фабрика нужного класса
+        if ( count($raw) && !($factory instanceof $class)) {
+            throw new \Exception("Collection(116): Коллекции необходимо передать маппер типа {$class}");
         }
 
         $this->raw    = $raw;
         $this->total  = count($raw);
-        $this->mapper = $mapper;
+        $this->mapper = $factory;
     }
 
-    // public function __construct(array $raw = [], DomainObjectFactory $dofact = null)
+
+
+        // public function __construct(array $raw = [], Mapper $mapper = null)
     // {
-    //     if (count($raw) && ! is_null($dofact) ) {
-    //         $this->raw = $raw;
-    //         $this->total = count($raw);
+    //     //Если есть $raw, обязательно нужен Mapper для обработки
+    //     if (count($raw) && is_null($mapper)) {
+    //         throw new \Exception("Нужен объект типа Mapper для создания объектов");
     //     }
-    //     $this->dofact = $dofact;
-    // }   
+
+    //     //Получаем имя класса маппера в дочерней реализации
+    //     $class = $this->targetMapperClass();
+    //     //Если массив данных не пуст, проверяем, что маппер нужного класса
+    //     if ( count($raw) && !($mapper instanceof $class)) {
+    //         throw new \Exception("Коллекции необходимо передать маппер типа {$class}");
+    //     }
+
+    //     $this->raw    = $raw;
+    //     $this->total  = count($raw);
+    //     $this->mapper = $mapper;
+    // }
+
+
+
+
+
 
     /**
      * Метод для добавления объектов модели в коллекцию
@@ -124,7 +142,7 @@ abstract class Collection implements \Iterator
         $class = $this->targetClass();
         //В коллекцию можно добавить только объекты соответствующего класса
         if (! ($model instanceof $class)) {
-            throw new \Exception("Это коллекция {$class}, можно добавлять только соответствующие модели");
+            throw new \Exception("Collection(): Это коллекция {$class}, можно добавлять только соответствующие модели");
         }
 
         //Для шаблона Lazy Load
@@ -138,7 +156,7 @@ abstract class Collection implements \Iterator
     protected function notifyAccess()
     {
         //намеренно оставлен пустым!
-        //Для шаблона Lazy Load
+        //Для шаблона Lazy Load, реализуется дочерним классом
     }
 
     /**
@@ -146,7 +164,7 @@ abstract class Collection implements \Iterator
      * 
      * @return null|DomainMidel\Domainmodel
      */
-    private function getRow($num)
+    private function getRow(int $num)
     {
         $this->notifyAccess();
         if ($num >= $this->total || $num < 0) {
@@ -160,7 +178,7 @@ abstract class Collection implements \Iterator
 
         //Иначе находим данные в массиве данных и создаём объект модели типа DomainModel
         if (isset($this->raw[$num])) {
-            $this->objects[$num] = $this->mapper->createObject($this->raw[$num]);
+            $this->objects[$num] = $this->factory->createObject($this->raw[$num]);
             return $this->objects[$num];
         }
     }

@@ -3,6 +3,7 @@
 namespace Collections;
 
 use Mapper\Mapper;
+use DomainObjectFactory\DomainObjectFactory;
 
 class DeferredEventCollection extends EventCollection
 {
@@ -22,12 +23,12 @@ class DeferredEventCollection extends EventCollection
      * @return null
      */
     public function __construct (
-                        Mapper        $mapper,
-                        \PDOStatement $stmt_handle,
-                        array         $valueArray
+                        DomainObjectFactory $factory,
+                        \PDOStatement       $stmt_handle,
+                        array               $valueArray
                     ) 
     {
-        parent::__construct ([], $mapper);
+        parent::__construct ([], $factory);
         $this->stmt       = $stmt_handle;
         $this->valueArray = $valueArray;
     }

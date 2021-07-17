@@ -11,7 +11,12 @@
  * из базы данных, от данных из полей объектов. В теле метода createObject()
  * можно произвести любое количество правок. Этот процесс прозрачен для клиента, обязанность которого — предоставлять исходные данные. Если убрать эти
  * функциональные возможности из класса Mapper, они станут доступными для
- * других компонентов. 
+ * других компонентов.
+ * 
+ * Объекты типа DomainObjectFactory отделены от базы данных, поэтому 
+ * их можно более эффективно использовать для тестирования. Например, можно
+ * создать имитирующий объект типа DomainObj ectFactory, чтобы протестировать исходный код класса Collection. 
+ * Сделать это намного проще, чем имитировать целый объект типа Mapper
  */
 namespace DomainObjectFactory;
 
@@ -20,10 +25,6 @@ use IdentityMap\ObjectWatcher;
 
 abstract class DomainObjectFactory
 {
-    // abstract public function createObject(array $row): DomainModel;
-    // abstract public function addToMap();
-    // abstract public function getFromMap();
-
     abstract protected function targetClass(): string;
     abstract protected function doCreateObject(array $raw): DomainModel;
 

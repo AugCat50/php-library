@@ -154,6 +154,9 @@ class ObjectWatcher
     {
         foreach ($this->dirty as $key => $obj) {
             $obj->getFinder()->update($obj);
+
+            //Служеюное сообщение для тестирования
+            print "ObjectWather(162): Выполяется обновление в БД: " . $obj->getName () . "<br>";
         }
 
         foreach ($this->new as $key => $obj) {
@@ -163,6 +166,8 @@ class ObjectWatcher
             print "ObjectWather(162): Выполяется сохранение в БД: " . $obj->getName () . "<br>";
         }
 
+        //Так же сделать обход массива delete
+        
         $this->dirty = [ ] ;
         $this->new   = [ ] ;
     }

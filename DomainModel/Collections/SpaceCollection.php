@@ -5,7 +5,6 @@
 namespace Collections;
 
 use DomainModel\SpaceModel;
-use Mapper\SpaceMapper;
 
 class SpaceCollection extends Collection
 {
@@ -21,13 +20,13 @@ class SpaceCollection extends Collection
     }
 
     /**
-     * Возвращает имя класса Маппера
-     * Используется для проверки, дочерняя коллекция должна получить конкретный тип маппера
+     * Возвращает имя класса фабрики моделей
+     * Используется для проверки, дочерняя коллекция должна получить фабрику для своего типа моделей
      * 
      * @return string
      */
-    public function targetMapperClass(): string
+    public function targetFactoryClass(): string
     {
-        return SpaceMapper::class;
+        return SpaceObjectFactory::class;
     }
 }
