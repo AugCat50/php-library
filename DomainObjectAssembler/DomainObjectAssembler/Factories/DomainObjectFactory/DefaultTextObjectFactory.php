@@ -1,5 +1,5 @@
 <?php 
-namespace PersistanceFactory\DomainObjectFactory;
+namespace DomainObjectAssembler\Factories\DomainObjectFactory;
 
 class DefaultTextObjectFactory
 {

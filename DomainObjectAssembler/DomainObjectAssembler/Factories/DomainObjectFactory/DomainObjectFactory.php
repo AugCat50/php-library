@@ -18,10 +18,10 @@
  * создать имитирующий объект типа DomainObjectFactory, чтобы протестировать исходный код класса Collection. 
  * Сделать это намного проще, чем имитировать целый объект типа Mapper
  */
-namespace DomainObjectFactory;
+namespace DomainObjectAssembler\Factories\DomainObjectFactory;
 
-use DomainModel\DomainModel;
-use IdentityMap\ObjectWatcher;
+use DomainObjectAssembler\DomainModel\DomainModel;
+use DomainObjectAssembler\IdentityMap\ObjectWatcher;
 
 abstract class DomainObjectFactory
 {

@@ -1,11 +1,11 @@
 <?php 
 
-namespace DomainObjectFactory;
+namespace DomainObjectAssembler\Factories\DomainObjectFactory;
 
-use Mapper\SpaceMapper;
-use DomainModel\EventModel;
-use DomainModel\SpaceModel;
-use DomainModel\DomainModel;
+use DomainObjectAssembler\Mapper\SpaceMapper;
+use DomainObjectAssembler\DomainModel\EventModel;
+use DomainObjectAssembler\DomainModel\SpaceModel;
+use DomainObjectAssembler\DomainModel\DomainModel;
 
 class EventObjectFactory extends DomainObjectFactory
 {

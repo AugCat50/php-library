@@ -9,9 +9,9 @@
  * Является синглтоном.
  * (Камни не кидать)
  */
-namespace Registry;
+namespace DomainObjectAssembler\Registry;
 
-use Traits\SingletonTrait;
+use DomainObjectAssembler\Traits\SingletonTrait;
 
 class Registry 
 {

@@ -7,14 +7,14 @@
  * 
  * Space содержит в себе Events
  */
-namespace DomainModel;
+namespace DomainObjectAssembler\DomainModel;
 
-use Mapper\Mapper;
-use Registry\Registry;
+use DomainObjectAssembler\Mapper\Mapper;
+use DomainObjectAssembler\Registry\Registry;
 
-use Mapper\EventMapper;
-use Mapper\SpaceMapper;
-use Collections\EventCollection;
+use DomainObjectAssembler\Mapper\EventMapper;
+use DomainObjectAssembler\Mapper\SpaceMapper;
+use DomainObjectAssembler\Collections\EventCollection;
 
 class SpaceModel extends DomainModel
 {

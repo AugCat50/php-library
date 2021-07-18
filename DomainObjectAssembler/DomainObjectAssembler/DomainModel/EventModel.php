@@ -5,10 +5,10 @@
  * Параметры соответствуют полям тыблицы в БД
  * Методы get set для обслуживания полей
  */
-namespace DomainModel;
+namespace DomainObjectAssembler\DomainModel;
 
-use Mapper\Mapper;
-use Mapper\EventMapper;
+use DomainObjectAssembler\Mapper\Mapper;
+use DomainObjectAssembler\Mapper\EventMapper;
 
 class EventModel extends DomainModel
 {

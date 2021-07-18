@@ -7,13 +7,13 @@
  * 
  * Venue содержит в себе Spaces
  */
-namespace DomainModel;
+namespace DomainObjectAssembler\DomainModel;
 
-use Registry\Registry;
-use Collections\SpaceCollection;
+use DomainObjectAssembler\Registry\Registry;
+use DomainObjectAssembler\Collections\SpaceCollection;
 
-use Mapper\Mapper;
-use Mapper\VenueMapper;
+use DomainObjectAssembler\Mapper\Mapper;
+use DomainObjectAssembler\Mapper\VenueMapper;
 
 class VenueModel extends DomainModel
 {

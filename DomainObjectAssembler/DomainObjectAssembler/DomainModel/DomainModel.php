@@ -5,17 +5,17 @@
  * так же реализует делегирующие методы шаблона Unit of Work класса ObjectWatcher,
  * для постановки задач на работу с БД
  */
-namespace DomainModel;
+namespace DomainObjectAssembler\DomainModel;
 
-use Mapper\Mapper;
-use Collections\Collection;
-use IdentityMap\ObjectWatcher;
+use DomainObjectAssembler\Mapper\Mapper;
+use DomainObjectAssembler\Collections\Collection;
+use DomainObjectAssembler\IdentityMap\ObjectWatcher;
 
 abstract class DomainModel
 {
     private $id;
 
-    abstract public function getFinder(): Mapper;
+    // abstract public function getFinder(): Mapper;
 
     /**
      * Конструктор

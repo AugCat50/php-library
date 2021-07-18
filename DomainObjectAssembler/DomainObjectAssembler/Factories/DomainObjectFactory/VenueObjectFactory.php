@@ -1,9 +1,9 @@
 <?php
-namespace DomainObjectFactory;
+namespace DomainObjectAssembler\Factories\DomainObjectFactory;
 
-use Mapper\SpaceMapper;
-use DomainModel\VenueModel;
-use DomainModel\DomainModel;
+use DomainObjectAssembler\Mapper\SpaceMapper;
+use DomainObjectAssembler\DomainModel\VenueModel;
+use DomainObjectAssembler\DomainModel\DomainModel;
 
 class VenueObjectFactory extends DomainObjectFactory
 {

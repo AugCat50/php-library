@@ -6,7 +6,10 @@
  * фабрики запросов (insert, select, update, delete)
  * 
  */
-namespace PersistanceFactory;
+namespace DomainObjectAssembler;
+
+use DomainObjectAssembler\IdentityObject\IdentityObject;
+use DomainObjectAssembler\SelectQueriesFactory\SelectionFactory;
 
 class PersistanceFactory
 {
@@ -34,6 +37,12 @@ class PersistanceFactory
         $this->modelClass = $modelName;
     }
 
+    public function getIdentityObject(): IdentityObject
+    {
+        $className = 'IdentityObject\\' . $this->modelClass .'IdentityObject';
+        return $this->reflection($className);
+    }
+
     /**
      * Получить объект фабрики модели
      * 
@@ -50,10 +59,14 @@ class PersistanceFactory
      * 
      * @return PersistanceFactory\SelectQueriesFactory\SelectQueriesFactory
      */
-    public function getSelectFactory()
+    public function getSelectionFactory()
     {
-        $className = 'PersistanceFactory\SelectQueriesFactory\\' . $this->modelClass .'SelectionFactory';
-        return $this->reflection($className);
+        // $className = 'PersistanceFactory\SelectQueriesFactory\\' . $this->modelClass .'SelectionFactory';
+        // return $this->reflection($className);
+
+        // $className = 'PersistanceFactory\SelectQueriesFactory\SelectionFactory';
+        // return $this->reflection($className);
+        return new SelectionFactory();
     }
 
     /**
@@ -87,6 +100,11 @@ class PersistanceFactory
     {
         $className = 'PersistanceFactory\DeleteQueriesFactory\\' . $this->modelClass .'DeleteFactory';
         return $this->reflection($className);
+    }
+
+    public function getCollection()
+    {
+
     }
 
     /**
