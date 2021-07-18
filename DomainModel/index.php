@@ -81,8 +81,13 @@
 
             // d($idobj);
 
-            $vuf = new UpdateFactory\VenueUpdateFactory();
-            print_r($vuf->newUpdate(new DomainModel\VenueModel(2, "The Happy Hairband")));
+            // $vuf = new UpdateFactory\VenueUpdateFactory();
+            // print_r($vuf->newUpdate(new DomainModel\VenueModel(2, "The Happy Hairband")));
+
+            // $vio = new VenueIdentityObject();
+            // $vio->field("name")->eq("The Happy Hairband");
+            // $vsf = new VenueSelectionFactory();
+            // print_r($vsf->newSelection($vio));
         ?>
     </body>
 </html>
