@@ -9,7 +9,7 @@
 namespace DomainObjectAssembler;
 
 use DomainObjectAssembler\IdentityObject\IdentityObject;
-use DomainObjectAssembler\SelectQueriesFactory\SelectionFactory;
+use DomainObjectAssembler\Factories\SelectQueriesFactory\SelectionFactory;
 
 class PersistanceFactory
 {
@@ -39,7 +39,7 @@ class PersistanceFactory
 
     public function getIdentityObject(): IdentityObject
     {
-        $className = 'IdentityObject\\' . $this->modelClass .'IdentityObject';
+        $className = 'DomainObjectAssembler\IdentityObject\\' . $this->modelClass .'IdentityObject';
         return $this->reflection($className);
     }
 
@@ -50,7 +50,7 @@ class PersistanceFactory
      */
     public function getModelFactory()
     {
-        $className = 'PersistanceFactory\DomainObjectFactory\\' . $this->modelClass .'ObjectFactory';
+        $className = 'DomainObjectAssembler\Factories\DomainObjectFactory\\' . $this->modelClass .'ObjectFactory';
         return $this->reflection($className);
     }
 
@@ -76,7 +76,7 @@ class PersistanceFactory
      */
     public function getInsertFactory()
     {
-        $className = 'PersistanceFactory\InsertQueriesFactory\\' . $this->modelClass .'InsertFactory';
+        $className = 'DomainObjectAssembler\Factories\InsertQueriesFactory\\' . $this->modelClass .'InsertFactory';
         return $this->reflection($className);
     }
 
@@ -87,7 +87,7 @@ class PersistanceFactory
      */
     public function getUpdateFactory()
     {
-        $className = 'PersistanceFactory\UpdateQueriesFactory\\' . $this->modelClass .'UpdateFactory';
+        $className = 'DomainObjectAssembler\Factories\UpdateQueriesFactory\\' . $this->modelClass .'UpdateFactory';
         return $this->reflection($className);
     }
 
@@ -98,13 +98,19 @@ class PersistanceFactory
      */
     public function getDeleteFactory()
     {
-        $className = 'PersistanceFactory\DeleteQueriesFactory\\' . $this->modelClass .'DeleteFactory';
+        $className = 'DomainObjectAssembler\Factories\DeleteQueriesFactory\\' . $this->modelClass .'DeleteFactory';
         return $this->reflection($className);
     }
 
-    public function getCollection()
+    public function getCollection(array $raw)
     {
+        $className = 'DomainObjectAssembler\Collections\\' . $this->modelClass .'Collection';
+        
+        $class        = new \ReflectionClass($className);
+        $modelFactory = $this->getModelFactory();
+        $factory      = $class->newInstance($raw, $modelFactory);
 
+        return $factory;
     }
 
     /**

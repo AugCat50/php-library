@@ -1,17 +1,22 @@
 <?php 
 namespace DomainObjectAssembler;
 
+use DomainObjectAssembler\Registry\Registry;
 use DomainObjectAssembler\Collections\Collection;
 use DomainObjectAssembler\DomainModel\DomainModel;
 use DomainObjectAssembler\IdentityObject\IdentityObject;
 
 class DomainObjectAssembler
 {
-    private $factory;
+    private $factory    = null;
+    private $statements = [];
+    private $pdo        = null;
 
     public function __construct(string $modelName)
     {
         $this->factory = new PersistanceFactory($modelName);
+        $reg = Registry::getInstance();
+        $this->pdo = $reg->getPdo();
         // $this->factory->getModelFactory();
     }
 
@@ -47,9 +52,12 @@ class DomainObjectAssembler
         //Получить объект SelectionFactory
         $selfact = $this->factory->getSelectionFactory();
 
-        d($selfact,1);
+        
 
-        //Полоучить лист запрос - переменные в объекте SelectionFactory
+        //Полоучить массив {[0] => 'запрос', [1] => переменные} в объекте SelectionFactory
+        //Получается массив готовый для prepare, типа:
+        //[0] => "SELECT id, name, text, hidden FROM default_texts WHERE name = ? AND id = ?"
+        //[1] => [0] => 'имя', [1] => int(4)
         list ($selection, $values) = $selfact->newSelection($idobj);
 
         //подготовить запрос prepare
@@ -62,6 +70,18 @@ class DomainObjectAssembler
         $raw = $stmt->fetchAll();
         return $this->factory->getCollection($raw);
     }
+
+
+    public function getStatement(string $str): \PDOStatement
+    {
+        if (! isset($this->statements[$str])) {
+            $this->statements[$str] = $this->pdo->prepare($str);
+        }
+        return $this->statements[$str];
+    }
+
+
+
 
     public function insert()
     {

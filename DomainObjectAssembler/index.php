@@ -19,21 +19,32 @@
 
             //Точка входа
             $assembler      = new DomainObjectAssembler\DomainObjectAssembler('DefaultText');
+            
             $identityObject = $assembler->getIdentityObject()
                                                 ->field('name')
-                                                ->eq('Земля');
-                                                
-            d($identityObject->getObjectFields(), 1);
+                                                ->eq('Земля')
+                                                ->field('id')
+                                                ->eq(4);
+                    
+            //ниже
+            // $w = new DomainObjectAssembler\Factories\DomainObjectFactory\DefaultTextObjectFactory();
+            // $r = $w instanceof DomainObjectAssembler\Factories\DomainObjectFactory\DomainObjectFactory;
+            // d($r ,1);
+            // d($identityObject,1);
+            //  d($identityObject->getObjectFields(), 1);
 
-            $assembler->find($identityObject);
-            d($identityObject);
+            $data = $assembler->find($identityObject);
+            d($data);
 
             // $idobj = $factory->getldentity0bject()
             //                         ->field(' name')
             //                         ->eq('The Eyeball Inn');
             // $collection = $finder->find($idobj);
-            // foreach ($collection as $venue) {
-            // print $venue->getName()."\n";
+            foreach ($data  as $venue) {
+            print $venue->getName()."\n";
+            }
+
+
         ?>
     </body>
 </html>

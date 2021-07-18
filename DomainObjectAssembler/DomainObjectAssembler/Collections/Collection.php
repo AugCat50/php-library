@@ -16,7 +16,8 @@ namespace DomainObjectAssembler\Collections;
 
 use DomainObjectAssembler\Mapper\Mapper;
 use DomainObjectAssembler\DomainModel\DomainModel;
-use DomainObjectAssembler\DomainObjectFactory\DomainObjectFactory;
+use DomainObjectAssembler\Factories\DomainObjectFactory\DomainObjectFactory;
+// use DomainObjectAssembler\Factories\DomainObjectFactory\DefaultTextObjectFactory;
 
 abstract class Collection implements \Iterator
 {

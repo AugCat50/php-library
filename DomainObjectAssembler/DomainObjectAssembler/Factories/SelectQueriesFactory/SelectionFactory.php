@@ -16,10 +16,15 @@ class SelectionFactory
 
     public function newSelection(IdentityObject $obj): array
     {
+        //Обращаемся к IdentityObject->Field чтобы узнкатьк акие поля надо и можно получить
         $fields = implode(", ", $obj->getObjectFields());
-        $core   = "SELECT $fields FROM venue";
-        d($core,1);
+        $core   = "SELECT $fields FROM default_texts";
+
         list($where, $values) = $this->buildWhere($obj);
+
+        //Получается массив готовый для prepare, типа:
+        //[0] => "SELECT id, name, text, hidden FROM default_texts WHERE name = ? AND id = ?"
+        //[1] => [0] => 'имя', [1] => int(4)
         return [$core . " " . $where, $values];
     }
 
@@ -35,9 +40,13 @@ class SelectionFactory
 
         $compstrings = [];
         $values      = [] ;
+
         foreach ($obj->getComps() as $comp) {
+            // name operator value
             // $compstrings [] = "{ $comp['name'] }{ $comp['operator'] } ?";
-            $values      [] = $comp['value'];
+            // $values      [] = $comp['value'];
+            $compstrings[] = $comp['name']. $comp['operator']. '?';
+            $values     [] = $comp['value'];
         }
         $where = "WHERE " . implode(" AND ", $compstrings);
         return [$where, $values];
