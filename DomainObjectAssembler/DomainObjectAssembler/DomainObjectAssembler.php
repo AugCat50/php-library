@@ -15,8 +15,8 @@ class DomainObjectAssembler
     public function __construct(string $modelName)
     {
         $this->factory = new PersistanceFactory($modelName);
-        $reg = Registry::getInstance();
-        $this->pdo = $reg->getPdo();
+        $reg           = Registry::getInstance();
+        $this->pdo     = $reg->getPdo();
         // $this->factory->getModelFactory();
     }
 
@@ -28,18 +28,16 @@ class DomainObjectAssembler
         $identityObject = $this->factory->getIdentityObject();
         return $identityObject;
     }
-
-    // public function findOne()
-    // {
-
-    // }
-
-    // public function find()
-    // {
-    //     $selFactory = $this->factory->getSelectFactory();
-    // }
-
     
+    /**
+     * Получает объект модели по текущему указателю коллекции и увеличивает казатель на 1
+     * По идее, у объекта коллекции уже будет увеличен указатель и в другом месте можно сразу получить модель
+     * по следующей строке.
+     * 
+     * @param  DomainObjectAssembler\IdentityObject\IdentityObject $idobj
+     * 
+     * @return DomainObjectAssembler\DomainModel\DomainModel
+     */
     public function findOne(IdentityObject $idobj): DomainModel
     {
         $collection = $this->find($idobj);
@@ -47,12 +45,17 @@ class DomainObjectAssembler
         return $collection->next();
     }
 
+    /**
+     * Получает коллекцию по запросу, сконфигурированному объектом идентичности и сгенерированному фабрикой запросов SelectionFactory.
+     * 
+     * @param  DomainObjectAssembler\IdentityObject\IdentityObject $idobj
+     * 
+     * @return DomainObjectAssembler\Collections\Collection
+     */
     public function find(IdentityObject $idobj): Collection
     {
         //Получить объект SelectionFactory
         $selfact = $this->factory->getSelectionFactory();
-
-        
 
         //Полоучить массив {[0] => 'запрос', [1] => переменные} в объекте SelectionFactory
         //Получается массив готовый для prepare, типа:
@@ -71,7 +74,14 @@ class DomainObjectAssembler
         return $this->factory->getCollection($raw);
     }
 
-
+    /**
+     * Закинуть строку запроса из фабрики запросов и выполнить pdo::prepare()
+     * Кешируем подготовленный запрос в массив [строка] = подготовленный запрос.
+     * 
+     * @param string $str
+     * 
+     * @return \PDOStatement
+     */
     public function getStatement(string $str): \PDOStatement
     {
         if (! isset($this->statements[$str])) {
@@ -79,9 +89,6 @@ class DomainObjectAssembler
         }
         return $this->statements[$str];
     }
-
-
-
 
     public function insert()
     {

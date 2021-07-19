@@ -99,9 +99,9 @@ abstract class Collection implements \Iterator
             throw new \Exception("Collection(116): Коллекции необходимо передать маппер типа {$class}");
         }
 
-        $this->raw    = $raw;
-        $this->total  = count($raw);
-        $this->mapper = $factory;
+        $this->raw     = $raw;
+        $this->total   = count($raw);
+        $this->factory = $factory;
     }
 
 
@@ -231,11 +231,12 @@ abstract class Collection implements \Iterator
      */
     public function next()
     {
-        $row = $this->getRow($this->pointer);
+        $model = $this->getRow($this->pointer);
 
-        if (! is_null($row)) {
+        if (! is_null($model)) {
             $this->pointer++;
         }
+        return $model;
     }
 
     /**

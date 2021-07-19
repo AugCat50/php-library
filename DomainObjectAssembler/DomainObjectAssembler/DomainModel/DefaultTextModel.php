@@ -13,6 +13,8 @@ class DefaultTextModel extends DomainModel
         $this->text   = $text;
         $this->hidden = $hidden;
         parent::__construct($id);
+        //Посмотреть стек
+        // d($this);
     }
 
     public function setName(string $name)

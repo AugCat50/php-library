@@ -109,7 +109,6 @@ class PersistanceFactory
         $class        = new \ReflectionClass($className);
         $modelFactory = $this->getModelFactory();
         $factory      = $class->newInstance($raw, $modelFactory);
-
         return $factory;
     }
 
