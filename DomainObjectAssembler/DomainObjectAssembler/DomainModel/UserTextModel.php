@@ -38,6 +38,18 @@ class UserTextModel extends DomainModel
         return $this->user_themes;
     }
 
+    
+    public function setName(string $name)
+    {
+        $this->name = $name;
+        $this->markDirty();
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function setText(string $text)
     {
         $this->text = $text;

@@ -1,5 +1,5 @@
 <?php
-namespace DomainObjectAssembler\Factories\UpdateFactory;
+namespace DomainObjectAssembler\Factories\UpdateQueriesFactory;
 
 use DomainObjectAssembler\DomainModel\DomainModel;
 
@@ -23,13 +23,15 @@ abstract class UpdateFactory
      * Методу buildStatement() передаются имя таблицы, ассоциативный массив полей и их значений и аналогичный ассоциативный 
      * массив условий. Все это объединяется в данном методе для составления запроса.
      * 
+     * Если массива условий нет, создаётся оператор INSERT
+     * 
      * Имя таблицы (UPDATE venue)
      * @param string $table
      * 
-     * Массив полей, которые будут затронуты в запросе (SET name = ?)
+     * Массив полей и их значений, которые будут затронуты в запросе (SET name = ?)
      * @param array $fields
      * 
-     * Массив условий (WHERE id = 1)
+     * Массив условий (WHERE id = 1 AND name = 'Вася')
      * @param array $conditions
      */
     protected function buildStatement(string $table, array $fields, array $conditions = null): array

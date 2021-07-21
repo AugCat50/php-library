@@ -28,8 +28,18 @@
                                                 ;
             //
 
-            $data = $assembler->findOne($identityObject);
-            d($data);
+            $model = $assembler->findOne($identityObject);
+            d($model);
+            $model->setName('Изменённый имя текста');
+            $model->setText('Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. ');
+            d($model);
+
+            // $model = new DomainObjectAssembler\DomainModel\UserModel(123, "Вася", "password", "dsfdsw23e23", "text@mail.test");
+            // $model = new DomainObjectAssembler\DomainModel\UserTextModel(-1, 1, 2, "Имя новый пользовательский текст", "Содержание Новый пользовательский текст");
+            $assembler->update($model);
+
+            $model1 = $assembler->findOne($identityObject);
+            d($model1);
         ?>
     </body>
 </html>

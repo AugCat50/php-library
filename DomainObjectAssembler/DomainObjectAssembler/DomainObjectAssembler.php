@@ -90,17 +90,32 @@ class DomainObjectAssembler
         return $this->statements[$str];
     }
 
-    public function insert()
+    /**
+     * Делегирует полномочия методу Update, поскольку оператор INSERT генерирует фабрика Updete в случае, если id модели пуст.
+     * Если id модели пуст, значит это новый объект, которого нет в БД.
+     */
+    public function insert(DomainModel $model)
     {
-        $insFactory = $this->factory->getInsertFactory();
+        $this->update($model);
+        // $insFactory = $this->factory->getInsertFactory();
     }
 
-    public function update()
+    public function update(DomainModel $model)
     {
         $updFactory = $this->factory->getUpdateFactory();
+
+        //Сгенерировать массив ['запрос', [данные]] в фабрике запросов
+        $query      = $updFactory->newUpdate($model);
+
+        //подготовить запрос prepare
+        $stmt = $this->getStatement($query[0]);
+
+        //Выполнить запрос
+        $stmt->execute($query[1]);
+        // d($array, 1);
     }
 
-    public function delete()
+    public function delete(DomainModel $model)
     {
         $delFactory = $this->factory->getDeleteFactory();
     }

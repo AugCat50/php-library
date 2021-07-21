@@ -14,8 +14,11 @@ class IdentityObject
     private   $enforce      = [];
     private   $tableName    = null;
 
-    // Объект идентичности может быть создан пустым
-    // или же с отдельным полем
+    /**
+     * Объект идентичности может быть создан пустым или же с отдельным полем
+     * В данном случае, конструктору необходимо передать массив допустимых полей $enforce 
+     * и строку с именем таблицы $tableName, для построения запросов в фабриках
+     */
     public function __construct(string $field = null, array $enforce = null, string $tableName = null)
     {
         if (! is_null($enforce) ) {
