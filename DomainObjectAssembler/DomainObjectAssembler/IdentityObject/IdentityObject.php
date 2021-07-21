@@ -12,10 +12,11 @@ class IdentityObject
     protected $currentfield = null;
     protected $fields       = [];
     private   $enforce      = [];
+    private   $tableName    = null;
 
     // Объект идентичности может быть создан пустым
     // или же с отдельным полем
-    public function __construct(string $field = null, array $enforce = null)
+    public function __construct(string $field = null, array $enforce = null, string $tableName = null)
     {
         if (! is_null($enforce) ) {
             $this->enforce = $enforce;
@@ -23,6 +24,10 @@ class IdentityObject
 
         if ( ! is_null($field) ) {
             $this->field($field);
+        }
+
+        if ( ! is_null($tableName) ) {
+            $this->tableName = $tableName;
         }
     }
 
@@ -117,5 +122,13 @@ class IdentityObject
         }
 
         return $ret;
+    }
+
+    public function getTableName(): string
+    {
+        if(! is_null($this->tableName)) {
+            return $this->tableName;
+        }
+        throw new \Exception("IdentityObject(132): Имя таблицы, которую обслуживает объект идентификации, не установлено!");    
     }
 }

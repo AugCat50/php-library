@@ -31,8 +31,9 @@ class SelectionFactory
     public function newSelection(IdentityObject $obj): array
     {
         //Обращаемся к IdentityObject\Field чтобы узнать какие поля надо и можно получить
-        $fields = implode(", ", $obj->getObjectFields());
-        $core   = "SELECT $fields FROM default_texts";
+        $fields    = implode(", ", $obj->getObjectFields());
+        $tableName = $obj->getTableName();
+        $core      = "SELECT $fields FROM $tableName";
 
         list($where, $values) = $this->buildWhere($obj);
 

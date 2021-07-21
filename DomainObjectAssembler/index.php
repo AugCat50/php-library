@@ -18,35 +18,18 @@
             $reg->setPdo();
 
             //Точка входа
-            $assembler      = new DomainObjectAssembler\DomainObjectAssembler('DefaultText');
+            $assembler      = new DomainObjectAssembler\DomainObjectAssembler('UserText');
             
             $identityObject = $assembler->getIdentityObject()
-                                                ->field('name')
-                                                ->eq('Земля')
+                                                ->field('id')
+                                                ->eq('2')
                                                 // ->field('id')
                                                 // ->eq(4)
                                                 ;
-                    
-            //ниже
-            // $w = new DomainObjectAssembler\Factories\DomainObjectFactory\DefaultTextObjectFactory();
-            // $r = $w instanceof DomainObjectAssembler\Factories\DomainObjectFactory\DomainObjectFactory;
-            // d($r ,1);
-            // d($identityObject,1);
-            //  d($identityObject->getObjectFields(), 1);
+            //
 
             $data = $assembler->findOne($identityObject);
             d($data);
-            $data2 = $assembler->findOne($identityObject);
-            d($data2);
-            // $idobj = $factory->getldentity0bject()
-            //                         ->field(' name')
-            //                         ->eq('The Eyeball Inn');
-            // $collection = $finder->find($idobj);
-            // foreach ($data  as $venue) {
-            //     print $venue->getName()."\n";
-            // }
-                // $we = $data->current();
-                // d($we);
         ?>
     </body>
 </html>

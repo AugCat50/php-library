@@ -1,7 +1,7 @@
 <?php
 namespace DomainObjectAssembler\DomainModel;
 
-class DefaultTextModel extends DomainModel
+class TempModel extends DomainModel
 {
     private $user_id;
     private $key_act;

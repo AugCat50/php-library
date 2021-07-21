@@ -7,7 +7,8 @@ class DefaultTextIdentityObject extends IdentityObject
     {
         parent::__construct(
             $field,
-            ['id', 'name',  'text', 'hidden']
+            ['id', 'name',  'text', 'hidden'],
+            'default_texts'
         );
     }
 }
