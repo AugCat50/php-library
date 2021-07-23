@@ -7,6 +7,7 @@
 namespace DomainObjectAssembler\Factories\UpdateQueriesFactory;
 
 use DomainObjectAssembler\DomainModel\DomainModel;
+use DomainObjectAssembler\DomainObjectAssembler;
 
 abstract class UpdateFactory
 {

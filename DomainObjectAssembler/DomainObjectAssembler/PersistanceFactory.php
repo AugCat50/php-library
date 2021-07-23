@@ -9,6 +9,7 @@
 namespace DomainObjectAssembler;
 
 use DomainObjectAssembler\IdentityObject\IdentityObject;
+use DomainObjectAssembler\Factories\DeleteQueriesFactory\DeletionFactory;
 use DomainObjectAssembler\Factories\SelectQueriesFactory\SelectionFactory;
 
 class PersistanceFactory
@@ -74,11 +75,11 @@ class PersistanceFactory
      * 
      * @return PersistanceFactory\InsertQueriesFactory\InsertQueriesFactory
      */
-    public function getInsertFactory()
-    {
-        $className = 'DomainObjectAssembler\Factories\InsertQueriesFactory\\' . $this->modelClass .'InsertFactory';
-        return $this->reflection($className);
-    }
+    // public function getInsertFactory()
+    // {
+    //     $className = 'DomainObjectAssembler\Factories\InsertQueriesFactory\\' . $this->modelClass .'InsertFactory';
+    //     return $this->reflection($className);
+    // }
 
     /**
      * Получить объект фабрики UPDATE запросов
@@ -96,10 +97,11 @@ class PersistanceFactory
      * 
      * @return PersistanceFactory\DeleteQueriesFactory\DeleteQueriesFactory
      */
-    public function getDeleteFactory()
+    public function getDeletionFactory()
     {
-        $className = 'DomainObjectAssembler\Factories\DeleteQueriesFactory\\' . $this->modelClass .'DeleteFactory';
-        return $this->reflection($className);
+        // $className = 'DomainObjectAssembler\Factories\DeleteQueriesFactory\\' . $this->modelClass .'DeleteFactory';
+        // return $this->reflection($className);
+        return new DeletionFactory();
     }
 
     public function getCollection(array $raw)

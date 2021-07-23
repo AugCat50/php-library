@@ -8,9 +8,10 @@ use DomainObjectAssembler\IdentityObject\IdentityObject;
 
 class DomainObjectAssembler
 {
-    private $factory    = null;
-    private $statements = [];
-    private $pdo        = null;
+    private $factory        = null;
+    private $statements     = [];
+    private $pdo            = null;
+    private $identityObject = null;
 
     public function __construct(string $modelName)
     {
@@ -25,8 +26,11 @@ class DomainObjectAssembler
      */
     public function getIdentityObject(): IdentityObject
     {
-        $identityObject = $this->factory->getIdentityObject();
-        return $identityObject;
+        if(is_null($this->identityObject)){
+            $this->identityObject = $this->factory->getIdentityObject();
+        }
+        
+        return $this->identityObject;
     }
     
     /**
@@ -112,11 +116,26 @@ class DomainObjectAssembler
 
         //Выполнить запрос
         $stmt->execute($query[1]);
-        // d($array, 1);
+        // d($query);
     }
 
-    public function delete(DomainModel $model)
+    /**
+     * Если id берётся из модели, рекомендую удалить и объект модели вручную,
+     * дабы не получить не связанный с БД объект модели в системе. Возможно пофикшу в Identity Map
+     */
+    public function delete(int $id)
     {
-        $delFactory = $this->factory->getDeleteFactory();
+        //Чтобы не грузить клиента созданием Identity Object, когда это можно сделать автоматически
+        $idObj = $this->getIdentityObject();
+        $idObj->field('id')->eq($id);
+
+        $delFactory = $this->factory->getDeletionFactory();
+        $queryStr   = $delFactory->newDeletion($idObj);
+
+        //подготовить запрос prepare
+        $stmt = $this->getStatement($queryStr);
+
+        //Выполнить запрос
+        $stmt->execute();
     }
 }
