@@ -34,4 +34,9 @@ class UserThemeModel extends DomainModel
     {
         return $this->name;
     }
+
+    public function getModelName(): string
+    {
+        return 'UserTheme';
+    }
 }

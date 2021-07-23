@@ -28,20 +28,36 @@ abstract class DomainObjectFactory
     abstract protected function targetClass(): string;
     abstract protected function doCreateObject(array $raw): DomainModel;
 
+    /**
+     * Работу с IdentityMap можно разместить здесь или в модели.
+     * Пока принял решение, что модель сама будет себя маркировать (addNew, addToMap)
+     */
     public function createObject(array $raw): DomainModel
     {
+        if(! array_key_exists('id', $raw)) {
+            $raw['id'] = -1;
+        }
+
         //Сначала проверить наличие ссылки на объект в ObjectWatcher (IdentityMap)
         //Если таковой уже имеется, возвращаем, если нет, идём дальше
-        $old = $this->getFromMap($raw['id']);
-        if (! is_null($old)) {
-            return $old;
+        if ($raw['id'] > 0) {
+            $old = $this->getFromMap($raw['id']);
+            if (! is_null($old)) {
+                return $old;
+            }
         }
 
         //Создать объект
         $obj = $this->doCreateObject($raw);
 
-        //Сохранить ссылку на объект в ObjectWatcher (IdentityMap)
-        $this->addToMap($obj);
+        //Сохранить ссылку на объект в ObjectWatcher (IdentityMap), если id реальный. Иначе добавить в список на запись в БД
+        // if ($raw['id'] > 0) {
+        //     $this->addToMap($obj);
+        // }
+        //  else {
+        //     $this->addToNew($obj);
+        // }
+        
         return $obj;
     }
 
@@ -67,8 +83,13 @@ abstract class DomainObjectFactory
      * 
      * @return null
      */
-    public function addToMap(DomainModel $model)
-    {
-        ObjectWatcher::add($model);
-    }
+    // public function addToMap(DomainModel $model)
+    // {
+    //     ObjectWatcher::add($model);
+    // }
+
+    // public function addToNew(DomainModel $model)
+    // {
+    //     ObjectWatcher::addNew($model);
+    // }
 }

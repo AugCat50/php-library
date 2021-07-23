@@ -60,4 +60,9 @@ class UserTextModel extends DomainModel
     {
         return $this->text;
     }
+
+    public function getModelName(): string
+    {
+        return 'UserText';
+    }
 }

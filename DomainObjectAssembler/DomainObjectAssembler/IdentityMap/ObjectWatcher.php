@@ -1,12 +1,10 @@
 <?php
 /**
- * Шаблон Identity Мар позволяет избежать дублирования объектов и излишняя их загрузка из БД
+ * Шаблон Identity Мар позволяет избежать дублирования объектов и излишней их загрузки из БД
  * 
  * До тех пор, пока шаблон Identity Мар применяется во всех контекстах, 
  * где объекты формируются из базы данных или вводятся в нее, 
  * вероятность дублирования объектов в ходе одного процесса практически равна нулю
- * 
- * В данной системе используется Мапперами
  * 
  * 
  * Шаблон Unit of Work очень полезен, но имеется ряд моментов, которые следует иметь в виду. Применяя данный шаблон, следует быть уверенным, что во
@@ -38,6 +36,7 @@ class ObjectWatcher
      */
     public function globalKey(DomainModel $model): string
     {
+        // if($model->getId() > 0)
         $key = get_class($model) . "." . $model->getId();
         return $key;
     }
@@ -149,26 +148,43 @@ class ObjectWatcher
      * массивах, должен быть вызван метод performOperations() (вероятно, из
      * класса контроллера или его вспомогательного класса). Этот метод обходит в
      * цикле массивы $dirty и $new, обновляя или добавляя объекты.
+     * 
+     * Подозреваю, где-то тут можно реализовать механизм транзакций.
      */
     public function performOperations()
     {
         foreach ($this->dirty as $key => $obj) {
-            $obj->getFinder()->update($obj);
+            // $obj->getFinder()->update($obj);
+            $obj->getAssembler()->doUpdate($obj);
 
             //Служеюное сообщение для тестирования
-            print "ObjectWather(162): Выполяется обновление в БД: " . $obj->getName () . "<br>";
+            print "ObjectWather(160): Выполяется обновление в БД: " . $obj->getName() . "<br>";
         }
 
         foreach ($this->new as $key => $obj) {
-            $obj->getFinder()->insert($obj);
+            // $obj->getFinder()->insert($obj);
+            $obj->getAssembler()->doInsert($obj);
 
             //Служеюное сообщение для тестирования
-            print "ObjectWather(162): Выполяется сохранение в БД: " . $obj->getName () . "<br>";
+            print "ObjectWather(168): Выполяется сохранение в БД: " . $obj->getName() . "<br>";
         }
 
         //Так же сделать обход массива delete
+        foreach ($this->delete as $key => $obj) {
+            $obj->getAssembler()->doDelete($obj);
+
+            //Служеюное сообщение для тестирования
+            print "ObjectWather(176): Выполяется удаление в БД: " . $obj->getName() . "<br>";
+        }
         
-        $this->dirty = [ ] ;
-        $this->new   = [ ] ;
+        //Удалить из массива all все модели, подвергшиеся удалению из БД
+        $inst = self::getInstance();
+        foreach ($this->delete as $key => $obj){
+            unset( $this->all[$inst->globalKey($obj)]);
+        }
+
+        $this->dirty  = [];
+        $this->new    = [];
+        $this->delete = [];
     }
 }

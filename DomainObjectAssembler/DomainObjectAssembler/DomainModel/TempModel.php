@@ -47,4 +47,9 @@ class TempModel extends DomainModel
     {
         return $this->mail;
     }
+
+    public function getModelName(): string
+    {
+        return 'Temp';
+    }
 }

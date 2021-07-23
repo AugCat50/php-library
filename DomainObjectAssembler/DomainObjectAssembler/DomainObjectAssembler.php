@@ -4,6 +4,7 @@ namespace DomainObjectAssembler;
 use DomainObjectAssembler\Registry\Registry;
 use DomainObjectAssembler\Collections\Collection;
 use DomainObjectAssembler\DomainModel\DomainModel;
+use DomainObjectAssembler\IdentityMap\ObjectWatcher;
 use DomainObjectAssembler\IdentityObject\IdentityObject;
 
 class DomainObjectAssembler
@@ -32,6 +33,13 @@ class DomainObjectAssembler
         
         return $this->identityObject;
     }
+
+    public function createNewModel(array $raw = []): DomainModel
+    {
+        $domainFactory = $this->factory->getModelFactory();
+        $model         = $domainFactory->createObject($raw);
+        return $model;
+    }
     
     /**
      * Получает объект модели по текущему указателю коллекции и увеличивает казатель на 1
@@ -45,8 +53,9 @@ class DomainObjectAssembler
     public function findOne(IdentityObject $idobj): DomainModel
     {
         $collection = $this->find($idobj);
+        $model      = $collection->next();
 
-        return $collection->next();
+        return $model;
     }
 
     /**
@@ -95,16 +104,38 @@ class DomainObjectAssembler
     }
 
     /**
-     * Делегирует полномочия методу Update, поскольку оператор INSERT генерирует фабрика Updete в случае, если id модели пуст.
-     * Если id модели пуст, значит это новый объект, которого нет в БД.
+     * По сути метод не нужен, поскольку при создании модели new , 
+     * она автоматически попадает на сохраниенние в конструкторе. 
+     * Если такое поведение не устраивает, необходимо в DomainModel удалить markNew() в конструкторе
      */
     public function insert(DomainModel $model)
     {
-        $this->update($model);
-        // $insFactory = $this->factory->getInsertFactory();
+        ObjectWatcher::addNew($model);
     }
 
     public function update(DomainModel $model)
+    {
+        ObjectWatcher::addDirty($model);
+    }
+
+    public function delete(DomainModel $model)
+    {
+        ObjectWatcher::addDelete($model);
+    }
+
+    /**
+     * Делегирует полномочия методу Update, поскольку оператор INSERT генерирует фабрика Updete в случае, если id модели пуст.
+     * Если id модели пуст, значит это новый объект, которого нет в БД.
+     */
+    // public function insert(DomainModel $model)
+    public function doInsert(DomainModel $model)
+    {
+        $this->doUpdate($model);
+        // $insFactory = $this->factory->getInsertFactory();
+    }
+
+    // public function update(DomainModel $model)
+    public function doUpdate(DomainModel $model)
     {
         $updFactory = $this->factory->getUpdateFactory();
 
@@ -123,8 +154,12 @@ class DomainObjectAssembler
      * Если id берётся из модели, рекомендую удалить и объект модели вручную,
      * дабы не получить не связанный с БД объект модели в системе. Возможно пофикшу в Identity Map
      */
-    public function delete(int $id)
+    // public function delete(int $id)
+    // public function delete(DomainModel $model)
+    public function doDelete(DomainModel $model)
     {
+        $id = $model->getId();
+
         //Чтобы не грузить клиента созданием Identity Object, когда это можно сделать автоматически
         $idObj = $this->getIdentityObject();
         $idObj->field('id')->eq($id);

@@ -9,13 +9,16 @@ namespace DomainObjectAssembler\DomainModel;
 
 use DomainObjectAssembler\Mapper\Mapper;
 use DomainObjectAssembler\Collections\Collection;
+use DomainObjectAssembler\DomainObjectAssembler;
 use DomainObjectAssembler\IdentityMap\ObjectWatcher;
+use PDO;
 
 abstract class DomainModel
 {
     private $id;
 
     // abstract public function getFinder(): Mapper;
+    abstract public function getModelName(): string;
 
     /**
      * Конструктор
@@ -29,10 +32,12 @@ abstract class DomainModel
     {
         $this->id = $id;
 
-        //Если не передан id, объект помечается как новый
+        //Объект модели регистрируется в ObjectWatcher, если не передан id > 0 - как новый
         //WARNING:: новые объекты могут автоматически попадать на сохранение в базу данных
         if ($id < 0) {
             $this->markNew();
+        } else {
+            $this->addToMap();
         }
     }
 
@@ -46,7 +51,11 @@ abstract class DomainModel
         return $this->id;
     }
 
-
+    public function getAssembler()
+    {
+        $modelName = $this->getModelName();
+        return new DomainObjectAssembler($modelName);
+    }
 
 
     //Unit of Work methods
@@ -68,6 +77,11 @@ abstract class DomainModel
     public function markClean()
     {
         ObjectWatcher::addClean($this) ;
+    }
+
+    public function addToMap()
+    {
+        ObjectWatcher::add($this);
     }
 
 

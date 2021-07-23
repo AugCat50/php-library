@@ -49,4 +49,9 @@ class DefaultTextModel extends DomainModel
     {
         return $this->hidden;
     }
+
+    public function getModelName(): string
+    {
+        return 'DefaultText';
+    }
 }

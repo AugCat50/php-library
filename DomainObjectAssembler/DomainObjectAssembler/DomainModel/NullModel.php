@@ -19,4 +19,9 @@ class NullModel extends DomainModel
     public function __set($name, $value){
         return null;
     }
+
+    public function getModelName(): string
+    {
+        return 'Null';
+    }
 }
