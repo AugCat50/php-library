@@ -18,24 +18,31 @@
             $reg->setPdo();
 
             //Точка входа
-            $assembler      = new DomainObjectAssembler\DomainObjectAssembler('UserText');
+            $assembler      = new DomainObjectAssembler\DomainObjectAssembler('User');
             
             $identityObject = $assembler->getIdentityObject()
                                                 ->field('id')
-                                                ->eq('2')
+                                                ->eq('3')
                                                 // ->field('id')
                                                 // ->eq(4)
                                                 ;
             //
 
             $model = $assembler->findOne($identityObject);
-            d($model);
-            $model->setName('Изменённый имя текста');
-            $model->setText('Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. Изменённый текст. ');
+            // $model = $assembler->find($identityObject);
             d($model);
 
-            // $model = new DomainObjectAssembler\DomainModel\UserModel(123, "Вася", "password", "dsfdsw23e23", "text@mail.test");
+            $model->setName("new Name");
+            $model->setPassword('newPass');
+            $model->setSolt(random_bytes(10));
+            $model->setMail('example@mail.test');
+            d($model);
+
+            // $model = new DomainObjectAssembler\DomainModel\UserModel(-1, "Вася", "password", random_bytes(10), "text@mail.test");
             // $model = new DomainObjectAssembler\DomainModel\UserTextModel(-1, 1, 2, "Имя новый пользовательский текст", "Содержание Новый пользовательский текст");
+            // $model = new DomainObjectAssembler\DomainModel\TempModel(-1, 3, 'ewfewfew', 'exemple@mail.test');
+            // $model = new DomainObjectAssembler\DomainModel\DefaultTextModel(-1, "Имя новый текст2", "Содержание Новый текст2", true);
+            // $model = new DomainObjectAssembler\DomainModel\UserThemeModel(-1, 1, "Содержание Новый текст2");
             $assembler->update($model);
 
             $model1 = $assembler->findOne($identityObject);

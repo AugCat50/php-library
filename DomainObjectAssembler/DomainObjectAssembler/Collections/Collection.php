@@ -16,6 +16,7 @@ namespace DomainObjectAssembler\Collections;
 
 use DomainObjectAssembler\Mapper\Mapper;
 use DomainObjectAssembler\DomainModel\DomainModel;
+use DomainObjectAssembler\DomainModel\NullModel;
 use DomainObjectAssembler\Factories\DomainObjectFactory\DomainObjectFactory;
 // use DomainObjectAssembler\Factories\DomainObjectFactory\DefaultTextObjectFactory;
 
@@ -168,8 +169,10 @@ abstract class Collection implements \Iterator
     private function getRow(int $num)
     {
         $this->notifyAccess();
+
+        //Если элемента не существует, возвращаем NullModel
         if ($num >= $this->total || $num < 0) {
-            return null;
+            return new NullModel;
         }
 
         //Если элемент есть в массиве объектов, берём его оттуда

@@ -2,30 +2,29 @@
 namespace DomainObjectAssembler\Factories\UpdateQueriesFactory;
 
 use DomainObjectAssembler\DomainModel\DomainModel;
-use DomainObjectAssembler\DomainModel\UserTextModel;
+use DomainObjectAssembler\DomainModel\DefaultTextModel;
 
-class UserTextUpdateFactory extends UpdateFactory
+class DefaultTextUpdateFactory extends UpdateFactory
 {
     /**
      * В методе newUpdate() извлекаются данные, необходимые для формирования запроса. 
      * Это процесс, посредством которого данные объекта преобразуются в информацию для базы данных.
      * 
-     * @param DomainObjectAssembler\DomainModel\UserTextModel $obj
+     * @param DomainObjectAssembler\DomainModel\DefaultTextModel $obj
      * 
      * @return array
      */
     public function newUpdate(DomainModel $obj): array
     {
         //проверка типов
-        if(! $obj instanceof UserTextModel){
-            throw new \Exception('UserTextUpdateFactory(21): Oбъект должен быть типа: '. UserTextModel::class . ' ---- Получен: '. get_class($obj));
+        if(! $obj instanceof DefaultTextModel){
+            throw new \Exception('DefaultTextUpdateFactory(21): Oбъект должен быть типа: '. DefaultTextModel::class . ' ---- Получен: '. get_class($obj));
         }
         
-        $id                    = $obj->getId();
-        $values['user_id']     = $obj->getUserId();
-        $values['user_themes'] = $obj->getUserThemes();
-        $values['name']        = $obj->getName();
-        $values['text']        = $obj->getText();
+        $id               = $obj->getId();
+        $values['name']   = $obj->getName();
+        $values['text']   = $obj->getText();
+        $values['hidden'] = $obj->getHidden();
 
         $cond = null;
 
@@ -33,6 +32,6 @@ class UserTextUpdateFactory extends UpdateFactory
             $cond['id'] = $id;
         }
 
-        return $this->buildStatement("user_texts", $values, $cond);
+        return $this->buildStatement("Default_texts", $values, $cond);
     }
 }

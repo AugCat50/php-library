@@ -67,7 +67,7 @@ class DomainObjectAssembler
         $stmt = $this->getStatement($selection);
 
         //Выполнить запрос
-        $stmt->execute($values);
+        $status = $stmt->execute($values);
 
         //Извлечь массив данных
         $raw = $stmt->fetchAll();
