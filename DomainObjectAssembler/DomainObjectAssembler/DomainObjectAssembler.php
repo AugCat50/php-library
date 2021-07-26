@@ -19,6 +19,10 @@ class DomainObjectAssembler
         $this->factory = new PersistanceFactory($modelName);
         $reg           = Registry::getInstance();
         $this->pdo     = $reg->getPdo();
+
+        if(is_null($this->pdo)) {
+            throw new \Exception('DomainObjectAssembler(__construct): получил NULL вместо объекта PDO.');
+        }
         // $this->factory->getModelFactory();
     }
 

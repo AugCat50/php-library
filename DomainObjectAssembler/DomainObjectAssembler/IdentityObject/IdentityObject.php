@@ -133,4 +133,16 @@ class IdentityObject
         }
         throw new \Exception("IdentityObject(132): Имя таблицы, которую обслуживает объект идентификации, не установлено!");    
     }
+
+    /**
+     * На случай, если захочется выбирать не все поля из БД, этим методом можно изменить список полей,
+     * захардкоженный в дочерних реализациях в конструкторе
+     * 
+     * Передать массив строк имён полей.
+     * @param array $enforce
+     */
+    public function setEnforrceFields(array $enforce)
+    {
+        $this->enforce = $enforce;
+    }
 }
